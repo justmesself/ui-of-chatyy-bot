@@ -2,11 +2,18 @@
 let currentTheme = 'dark';
 let chatHistory = [];
 let currentFile = null;
-let toggleState = 0; // 0: dark, 1: light, 2: toggle history
+let toggleState = 0;
 let typingEffectActive = true;
-let fullFormText = "Ideal Science & Technology\nAiming Research Council";
-let typingIndex = 0;
-let typingDirection = 1; // 1 for typing, -1 for deleting
+let fullFormText = "IDEAL SCIENCE & TECHNOLOGY AIMING RESEARCH COUNCIL";
+let footerFullFormText = "IDEAL SCIENCE & TECHNOLOGY AIMING RESEARCH COUNCIL";
+let footerInitialAnimation = true;
+let footerTypingIndex = 0;
+let footerTypingDirection = 1;
+let openingAnimationComplete = false;
+let mottoText = "Science in Creation, Not Annihilation";
+let mottoIndex = 0;
+let footerTypingInterval;
+let isSending = false;
 
 // Sample chat history data
 const sampleHistory = [
@@ -19,34 +26,48 @@ const sampleHistory = [
 // Science & tech emojis only
 const scienceEmojis = ["🔬", "⚗️", "🧪", "🧬", "🔭", "💻", "📡", "⚛️", "🧮", "🔋", "💾", "🧲", "🌡️", "🧫", "🔍", "📊", "🧠", "⚙️", "🔧", "📐"];
 
-// ISTARC Facts for responses       
+// ISTARC Facts for responses
 const istarcFacts = [
-    "ISTARC (Ideal Science & Technology Aiming Research Council) was established in 2018.",
-    "We have organized over 50 workshops and science festivals since our inception.",
-    "Our club has more than 500 active student members passionate about science.",
-    "ISTARC focuses on 'Science in Creation, not Annihilation' as our core philosophy.",
-    "We are part of Ideal Science College, promoting scientific thinking among students.",
-    "Our events include hands-on experiments, research competitions, and tech workshops.",
-    "ISTARC encourages students to participate in national and international science fairs.",
-    "We believe in practical learning and applying scientific methods to real-world problems."
+    "ISTARC (IDEAL SCIENCE & TECHNOLOGY AIMING RESEARCH COUNCIL) was established in 2018 with a vision to promote scientific temper among students.",
+    "We have organized over 50 workshops and science festivals since our inception, reaching more than 5000 students.",
+    "Our club has more than 500 active student members passionate about science, technology, and innovation.",
+    "ISTARC focuses on 'Science in Creation, not Annihilation' as our core philosophy - promoting constructive scientific applications.",
+    "We are part of Ideal Science College, dedicated to fostering scientific thinking and research culture among students.",
+    "Our events include hands-on experiments, research competitions, tech workshops, and national science fair participations.",
+    "ISTARC encourages students to participate in national and international science fairs, with several winning projects.",
+    "We believe in practical learning and applying scientific methods to real-world problems through collaborative projects."
 ];
 
-// Greeting responses
+// Science & Math Facts
+const scienceMathFacts = [
+    "The speed of light is approximately 299,792,458 meters per second - a fundamental constant in physics.",
+    "Pi (π) is an irrational number that continues infinitely without repeating. Mathematicians have calculated over 50 trillion digits of Pi!",
+    "Water expands when it freezes, which is unusual as most substances contract when they solidify.",
+    "The human brain contains about 86 billion neurons, each connected to thousands of other neurons.",
+    "DNA, if uncoiled, would stretch from the Earth to the Sun and back about 600 times.",
+    "A single bolt of lightning contains enough energy to toast 100,000 slices of bread.",
+    "The Great Pyramid of Giza was the tallest man-made structure in the world for over 3,800 years.",
+    "Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old and still perfectly edible.",
+    "There are more possible iterations of a game of chess than there are atoms in the known universe.",
+    "The Earth's core is as hot as the surface of the Sun - about 5,500°C (9,932°F)."
+];
+
+// Greeting responses with ISTARC info
 const greetingResponses = [
-    "Hello! I'm OESTRON, your science assistant from ISTARC. How can I help you explore science today?",
-    "Hi there! Ready to dive into some scientific exploration? I'm here to assist with all your science and tech questions.",
-    "Greetings! As part of ISTARC, I'm excited to help you with research, experiments, or any scientific concepts you want to explore.",
-    "Welcome! I'm OESTRON from ISTARC - your gateway to understanding science and technology in creative ways.",
-    "Hello! Science awaits! I'm here to help you with projects, research, or just satisfying your scientific curiosity."
+    "Hello! I'm OESTRON, your science assistant from ISTARC (IDEAL SCIENCE & TECHNOLOGY AIMING RESEARCH COUNCIL). How can I help you explore science today? Did you know ISTARC has organized over 50 science workshops since 2018?",
+    "Hi there! Ready to dive into some scientific exploration? I'm here to assist with all your science and tech questions. As part of ISTARC, we focus on 'Science in Creation, not Annihilation'.",
+    "Greetings! I'm OESTRON from ISTARC - your gateway to understanding science and technology in creative ways. Our club has 500+ active members passionate about innovation!",
+    "Welcome! I'm OESTRON, developed by ISTARC's IT team. I can help with research, experiments, or scientific concepts. Fun fact: ISTARC encourages participation in national science fairs!",
+    "Hello! Science awaits! I'm here to help you with projects, research, or just satisfying your scientific curiosity. ISTARC believes in practical learning through hands-on experiments."
 ];
 
 // Science responses
 const scienceResponses = [
-    "Based on scientific principles, I'd suggest...",
-    "From a research perspective, we could approach this by...",
-    "The scientific method teaches us to...",
-    "In laboratory settings, this would be tested by...",
-    "Research shows that the most effective approach is..."
+    "Based on scientific principles, I'd suggest approaching this systematically. The scientific method teaches us to observe, hypothesize, experiment, and analyze.",
+    "From a research perspective, we could approach this by first reviewing existing literature, then designing a controlled experiment to test our hypothesis.",
+    "The scientific method teaches us to be systematic: make observations, ask questions, form hypotheses, conduct experiments, and draw conclusions.",
+    "In laboratory settings, this would be tested using controlled experiments with proper variables and replication for statistical significance.",
+    "Research shows that the most effective approach is to break down complex problems into smaller, testable components."
 ];
 
 // ===== DOM ELEMENT REFERENCES =====
@@ -63,26 +84,20 @@ const attachFileBtn = document.getElementById('attachFileBtn');
 const emojiPickerBtn = document.getElementById('emojiPickerBtn');
 const emojiPicker = document.getElementById('emojiPicker');
 const emojiGrid = document.getElementById('emojiGrid');
-const copyChatButton = document.getElementById('copyChatButton');
 const typingIndicator = document.getElementById('typingIndicator');
-const loadingContainer = document.getElementById('loadingContainer');
 const errorContainer = document.getElementById('errorContainer');
 const errorText = document.getElementById('errorText');
-const fileUploadProgress = document.getElementById('fileUploadProgress');
-const progressFill = document.getElementById('progressFill');
-const progressPercentage = document.getElementById('progressPercentage');
-const fileName = document.getElementById('fileName');
-const filePreviewModal = document.getElementById('filePreviewModal');
-const previewCloseBtn = document.getElementById('previewCloseBtn');
-const closePreviewBtn = document.getElementById('closePreviewBtn');
-const downloadPreviewBtn = document.getElementById('downloadPreviewBtn');
-const previewFileName = document.getElementById('previewFileName');
-const previewFileSize = document.getElementById('previewFileSize');
-const previewFileIcon = document.getElementById('previewFileIcon');
-const previewBody = document.getElementById('previewBody');
-const deleteAllBtn = document.getElementById('deleteAllBtn');
-const typingText = document.getElementById('typingText');
 const emojiCloseBtn = document.getElementById('emojiCloseBtn');
+const openingOverlay = document.getElementById('openingOverlay');
+const openingLogo = document.getElementById('openingLogo');
+const openingMottoText = document.getElementById('openingMottoText');
+const mainApp = document.getElementById('mainApp');
+const mainFooter = document.getElementById('mainFooter');
+const footerTypingText = document.getElementById('footerTypingText');
+const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+const infoPanel = document.getElementById('infoPanel');
+const footerLogo = document.getElementById('footerLogo');
+const deleteAllBtn = document.getElementById('deleteAllBtn');
 
 // Create delete confirmation modal
 const deleteConfirmationModal = document.createElement('div');
@@ -110,31 +125,84 @@ document.body.appendChild(deleteConfirmationModal);
 const deleteCancelBtn = document.getElementById('deleteCancelBtn');
 const deleteConfirmBtn = document.getElementById('deleteConfirmBtn');
 
-// ===== TYPING EFFECT FOR ISTARC FULL FORM =====
-function startTypingEffect() {
-    setInterval(() => {
+// ===== OPENING ANIMATION =====
+function startOpeningAnimation() {
+    const mottoInterval = setInterval(() => {
+        if (mottoIndex <= mottoText.length) {
+            openingMottoText.textContent = mottoText.substring(0, mottoIndex);
+            mottoIndex++;
+        } else {
+            clearInterval(mottoInterval);
+            
+            setTimeout(() => {
+                openingOverlay.classList.add('hiding');
+                startLogoAnimation();
+                
+                setTimeout(() => {
+                    openingOverlay.style.display = 'none';
+                    mainApp.style.display = 'flex';
+                    openingAnimationComplete = true;
+                    
+                    // Set footer to initial visible state
+                    mainFooter.classList.add('initial-visible');
+                    
+                    startFooterTypingEffect();
+                    
+                    setTimeout(() => {
+                        showTemporaryNotification("Welcome to OESTRON - ISTARC's Science Assistant!");
+                    }, 500);
+                }, 800);
+            }, 300);
+        }
+    }, 50);
+}
+
+function startLogoAnimation() {
+    // Add drop animation to logo
+    openingLogo.style.animation = 'logoToFooter 2s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards';
+    
+    // Fade out motto text quickly
+    openingMottoText.style.transition = 'opacity 0.3s ease';
+    openingMottoText.style.opacity = '0';
+}
+
+// ===== TYPING EFFECT FOR FOOTER =====
+function startFooterTypingEffect() {
+    if (footerTypingInterval) {
+        clearInterval(footerTypingInterval);
+    }
+    
+    footerTypingIndex = 0;
+    footerTypingDirection = 1;
+    
+    footerTypingInterval = setInterval(() => {
         if (!typingEffectActive) return;
         
-        if (typingDirection === 1) {
-            // Typing forward
-            if (typingIndex <= fullFormText.length) {
-                typingText.textContent = fullFormText.substring(0, typingIndex);
-                typingIndex++;
+        if (footerTypingDirection === 1) {
+            if (footerTypingIndex <= footerFullFormText.length) {
+                footerTypingText.textContent = footerFullFormText.substring(0, footerTypingIndex);
+                footerTypingIndex++;
+                
+                // When first typing completes
+                if (footerTypingIndex > footerFullFormText.length) {
+                    setTimeout(() => {
+                        if (mainFooter.classList.contains('initial-visible')) {
+                            mainFooter.classList.remove('initial-visible');
+                        }
+                    }, 2000);
+                }
             } else {
-                // Pause at the end
                 setTimeout(() => {
-                    typingDirection = -1;
+                    footerTypingDirection = -1;
                 }, 2000);
             }
         } else {
-            // Deleting backward
-            if (typingIndex >= 0) {
-                typingText.textContent = fullFormText.substring(0, typingIndex);
-                typingIndex--;
+            if (footerTypingIndex >= 0) {
+                footerTypingText.textContent = footerFullFormText.substring(0, footerTypingIndex);
+                footerTypingIndex--;
             } else {
-                // Pause at the beginning
                 setTimeout(() => {
-                    typingDirection = 1;
+                    footerTypingDirection = 1;
                 }, 1000);
             }
         }
@@ -156,43 +224,97 @@ function initializeTheme() {
     // Load chat history
     loadChatHistory();
     
-    // Start typing effect
-    startTypingEffect();
+    // Start opening animation
+    startOpeningAnimation();
 }
 
 function applyTheme(theme) {
     if (theme === 'dark') {
         document.body.classList.add('dark-theme');
         document.body.classList.remove('light-theme');
+        openingOverlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
     } else {
         document.body.classList.remove('dark-theme');
         document.body.classList.add('light-theme');
+        openingOverlay.style.backgroundColor = 'rgba(240, 244, 248, 0.95)';
     }
     currentTheme = theme;
     localStorage.setItem('chatTheme', theme);
 }
 
-function handleThemeToggle() {
-    toggleState++;
-    
-    if (toggleState === 1) {
-        // First click: switch to light theme
-        applyTheme('light');
-        showTemporaryNotification("Switched to light theme");
-    } else if (toggleState === 2) {
-        // Second click: toggle chat history
-        chatHistorySidebar.classList.toggle('active');
-        
-        if (chatHistorySidebar.classList.contains('active')) {
-            showTemporaryNotification("Chat history opened");
-        } else {
-            showTemporaryNotification("Chat history closed");
+// ===== CHAT HISTORY TOGGLE =====
+function initializeChatHistoryToggle() {
+    themeToggle.addEventListener('click', (e) => {
+        if (toggleState === 0) {
+            // First click: switch to light theme
+            applyTheme('light');
+            toggleState = 1;
+            showTemporaryNotification("Switched to light theme");
+        } else if (toggleState === 1) {
+            // Second click: toggle chat history sidebar
+            e.preventDefault();
+            e.stopPropagation();
+            
+            chatHistorySidebar.classList.toggle('active');
+            
+            if (chatHistorySidebar.classList.contains('active')) {
+                // When opening sidebar, show footer fully
+                mainFooter.classList.add('initial-visible');
+                showTemporaryNotification("Chat history opened");
+            } else {
+                // When closing sidebar, hide footer partially if not in initial animation
+                if (!footerInitialAnimation) {
+                    mainFooter.classList.remove('initial-visible');
+                }
+                showTemporaryNotification("Chat history closed");
+            }
+            
+            toggleState = 0;
+            // Switch back to dark theme for next cycle
+            setTimeout(() => {
+                applyTheme('dark');
+            }, 100);
         }
+    });
+    
+    // Close sidebar when clicking outside on desktop
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth > 900 && 
+            chatHistorySidebar.classList.contains('active') &&
+            !chatHistorySidebar.contains(e.target) &&
+            !themeToggle.contains(e.target)) {
+            
+            chatHistorySidebar.classList.remove('active');
+            // Hide footer partially when sidebar closes
+            if (!footerInitialAnimation) {
+                mainFooter.classList.remove('initial-visible');
+            }
+            toggleState = 0;
+            setTimeout(() => {
+                applyTheme('dark');
+            }, 100);
+        }
+    });
+}
+
+// ===== MOBILE MENU TOGGLE =====
+function initializeMobileMenu() {
+    mobileMenuToggle.addEventListener('click', () => {
+        infoPanel.classList.toggle('collapsed');
         
-        // Reset toggle state after history toggle
-        toggleState = 0;
-        // Switch back to dark theme for next cycle
-        applyTheme('dark');
+        if (infoPanel.classList.contains('collapsed')) {
+            mobileMenuToggle.innerHTML = '<i class="fas fa-chevron-down"></i>';
+            showTemporaryNotification("Info panel collapsed");
+        } else {
+            mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            showTemporaryNotification("Info panel expanded");
+        }
+    });
+    
+    // Auto-collapse on mobile
+    if (window.innerWidth <= 1300) {
+        infoPanel.classList.add('collapsed');
+        mobileMenuToggle.innerHTML = '<i class="fas fa-chevron-down"></i>';
     }
 }
 
@@ -220,7 +342,7 @@ function updateChatHistory() {
     chatHistory.forEach(item => item.active = false);
     chatHistory.unshift({
         id: chatHistory.length + 1,
-        title: `Chat ${new Date().getHours()}:${new Date().getMinutes()}`,
+        title: `Chat ${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, '0')}`,
         date: "Just now",
         active: true
     });
@@ -330,20 +452,12 @@ function updateHistoryList() {
         
         // Click to load chat
         historyItem.addEventListener('click', (e) => {
-            // Don't trigger if clicking delete button
             if (!e.target.closest('.history-item-delete')) {
-                // Remove active class from all items
                 document.querySelectorAll('.history-item').forEach(el => {
                     el.classList.remove('active');
                 });
-                
-                // Add active class to clicked item
                 historyItem.classList.add('active');
-                
-                // Update active state in data
                 chatHistory.forEach(chat => chat.active = chat.id === item.id);
-                
-                // In a real app, this would load the selected chat
                 showTemporaryNotification(`Loading: ${item.title}`);
             }
         });
@@ -351,10 +465,8 @@ function updateHistoryList() {
         // Delete button for individual item
         const deleteBtn = historyItem.querySelector('.history-item-delete');
         deleteBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent triggering the parent click
+            e.stopPropagation();
             const id = parseInt(e.currentTarget.dataset.id);
-            
-            // Show confirmation for single item
             if (confirm(`Delete "${item.title}" from history?`)) {
                 deleteSingleHistoryItem(id);
             }
@@ -366,6 +478,9 @@ function updateHistoryList() {
 
 // ===== EMOJI PICKER =====
 function initializeEmojiPicker() {
+    // Clear existing emojis
+    emojiGrid.innerHTML = '';
+    
     // Populate science emojis only
     scienceEmojis.forEach(emoji => {
         const emojiBtn = document.createElement('button');
@@ -390,14 +505,13 @@ function insertEmoji(emoji) {
     messageInput.selectionStart = cursorPos + emoji.length;
     messageInput.selectionEnd = cursorPos + emoji.length;
     
-    // Auto-resize textarea
     autoResizeTextarea();
 }
 
 // ===== CHAT FUNCTIONALITY =====
 function autoResizeTextarea() {
     messageInput.style.height = 'auto';
-    const maxHeight = 200; // 10 lines * 20px per line
+    const maxHeight = 150;
     const scrollHeight = messageInput.scrollHeight;
     
     if (scrollHeight > maxHeight) {
@@ -442,7 +556,7 @@ function addMessage(content, isUser = false, fileAttached = null) {
     
     chatMessages.appendChild(messageDiv);
     
-    // Add copy functionality to the button
+    // Add copy functionality
     const copyBtn = messageDiv.querySelector('.copy-message-btn');
     copyBtn.addEventListener('click', () => {
         const messageText = messageDiv.querySelector('.message-text').textContent;
@@ -456,15 +570,6 @@ function addMessage(content, isUser = false, fileAttached = null) {
         });
     });
     
-    // Add click event to file attachment if present
-    if (fileAttached) {
-        const fileAttachment = messageDiv.querySelector('.file-attachment');
-        fileAttachment.addEventListener('click', () => {
-            previewFile(fileAttached);
-        });
-    }
-    
-    // Scroll to the new message
     setTimeout(() => {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }, 100);
@@ -473,84 +578,71 @@ function addMessage(content, isUser = false, fileAttached = null) {
 }
 
 function sendMessage() {
+    if (isSending) return;
+    
     const message = messageInput.value.trim();
     if (!message && !currentFile) return;
     
-    // Add user message to chat
     addMessage(message, true, currentFile);
-    
-    // Clear input and reset file
     messageInput.value = '';
     currentFile = null;
     autoResizeTextarea();
     
-    // Show typing indicator
+    isSending = true;
+    sendButton.disabled = true;
+    sendButton.classList.add('sending');
+    
     typingIndicator.style.display = 'flex';
     chatMessages.scrollTop = chatMessages.scrollHeight;
     
-    // Simulate AI processing delay
     setTimeout(() => {
         typingIndicator.style.display = 'none';
+        isSending = false;
+        sendButton.disabled = false;
+        sendButton.classList.remove('sending');
         
-        // Simulate occasional error
-        if (Math.random() < 0.05) {
-            showError("Hmm, my scientific circuits need recalibration! Let me try that again...");
-            return;
-        }
-        
-        // Generate AI response based on message content
         let response = generateResponse(message.toLowerCase());
-        
-        // Add AI response
         addMessage(response, false);
         
-        // Update chat history
         const activeChat = chatHistory.find(item => item.active);
         if (activeChat) {
-            // Update date of active chat
             activeChat.date = `Today, ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-            
-            // Update chat title from first few words
             if (activeChat.title.startsWith('Chat')) {
                 const words = message.split(' ').slice(0, 4).join(' ');
                 if (words.length > 0) {
                     activeChat.title = words + (words.length < 20 ? '' : '...');
                 }
             }
-            
             updateHistoryList();
         }
-        
     }, 1500 + Math.random() * 1000);
 }
 
 function generateResponse(userMessage) {
-    // Check for greetings
     if (userMessage.match(/\b(hi|hello|hey|greetings|good morning|good afternoon|good evening)\b/i)) {
         return greetingResponses[Math.floor(Math.random() * greetingResponses.length)];
     }
     
-    // Check for ISTARC related questions
     if (userMessage.includes('istarc') || userMessage.includes('club') || userMessage.includes('science club')) {
         const fact = istarcFacts[Math.floor(Math.random() * istarcFacts.length)];
-        return `As part of ISTARC, ${fact.toLowerCase()} ${scienceResponses[Math.floor(Math.random() * scienceResponses.length)]}`;
+        const scienceFact = scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)];
+        return `${fact}\n\nFun Science Fact: ${scienceFact}`;
     }
     
-    // Check for science/tech questions
-    if (userMessage.includes('science') || userMessage.includes('tech') || userMessage.includes('research') || 
-        userMessage.includes('experiment') || userMessage.includes('project')) {
+    if (userMessage.includes('science') || userMessage.includes('math') || userMessage.includes('physics') || 
+        userMessage.includes('chemistry') || userMessage.includes('biology')) {
         const scienceResponse = scienceResponses[Math.floor(Math.random() * scienceResponses.length)];
-        const fact = istarcFacts[Math.floor(Math.random() * istarcFacts.length)];
-        return `${scienceResponse} This aligns with ISTARC's approach where ${fact.toLowerCase()}`;
+        const scienceFact = scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)];
+        const istarcFact = istarcFacts[Math.floor(Math.random() * istarcFacts.length)];
+        return `${scienceResponse}\n\n${scienceFact}\n\nISTARC Perspective: ${istarcFact}`;
     }
     
-    // Default response with ISTARC context
     const defaultResponses = [
-        `From ISTARC's perspective, I'd approach this scientifically by first understanding the core principles involved.`,
-        `Based on ISTARC's focus on practical science, let's break this down using the scientific method.`,
-        `As an ISTARC assistant, I encourage exploring this through experimentation and observation.`,
-        `ISTARC teaches us to approach problems systematically. Let's analyze this step by step.`,
-        `Drawing from ISTARC's research methodologies, we could investigate this further by...`
+        `From ISTARC's perspective, I'd approach this scientifically by first understanding the core principles involved. This aligns with our focus on practical scientific applications.\n\nDid you know? ${scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)]}`,
+        `Based on ISTARC's focus on practical science, let's break this down using the scientific method. Our club emphasizes hands-on learning through experiments and research projects.\n\nScience Fact: ${scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)]}`,
+        `As an ISTARC assistant, I encourage exploring this through experimentation and observation. We believe in 'Science in Creation, not Annihilation' - using science for constructive purposes.\n\nInteresting Fact: ${scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)]}`,
+        `ISTARC teaches us to approach problems systematically. Let's analyze this step by step using research methodologies we practice in our workshops.\n\nScientific Trivia: ${scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)]}`,
+        `Drawing from ISTARC's research methodologies, we could investigate this further through systematic inquiry. Our club has helped students develop innovative projects using similar approaches.\n\nFun Fact: ${scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)]}`
     ];
     
     return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
@@ -560,47 +652,53 @@ function showError(errorMessage) {
     errorText.textContent = errorMessage;
     errorContainer.style.display = 'block';
     
-    // Scroll error into view
     chatMessages.scrollTop = chatMessages.scrollHeight;
     
-    // Hide error after 5 seconds
     setTimeout(() => {
         errorContainer.style.display = 'none';
     }, 5000);
 }
 
+// ===== FIXED: TOP POPUP NOTIFICATION WITH LOWER OPACITY =====
 function showTemporaryNotification(message) {
-    // Create notification element
     const notification = document.createElement('div');
     notification.style.cssText = `
         position: fixed;
-        bottom: 30px;
+        top: 140px; /* Position below OESTRON logo */
         left: 50%;
-        transform: translateX(-50%) translateY(100px);
+        transform: translateX(-50%) translateY(-30px);
         background-color: var(--accent-color);
         color: white;
         padding: 12px 24px;
-        border-radius: 10px;
+        border-radius: 12px;
         z-index: 10000;
         font-family: 'Exo 2', sans-serif;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        font-size: 0.95rem;
+        font-weight: 500;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         white-space: nowrap;
-        text-shadow: none;
+        text-align: center;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        opacity: 0.7; /* Lower opacity */
     `;
+    
     notification.textContent = message;
     document.body.appendChild(notification);
     
-    // Animate in
     setTimeout(() => {
         notification.style.transform = 'translateX(-50%) translateY(0)';
+        notification.style.opacity = '0.7'; /* Lower opacity */
     }, 10);
     
-    // Animate out and remove after 3 seconds
     setTimeout(() => {
-        notification.style.transform = 'translateX(-50%) translateY(100px)';
+        notification.style.transform = 'translateX(-50%) translateY(-30px)';
+        notification.style.opacity = '0';
         setTimeout(() => {
-            document.body.removeChild(notification);
+            if (notification.parentNode) {
+                document.body.removeChild(notification);
+            }
         }, 400);
     }, 3000);
 }
@@ -616,64 +714,21 @@ function handleFileSelect(event) {
         type: getFileType(file.name)
     };
     
-    // Show upload progress
     simulateFileUpload(file);
-    
-    // Show notification
-    showTemporaryNotification(`"${file.name}" attached`);
 }
 
 function simulateFileUpload(file) {
-    fileUploadProgress.style.display = 'block';
-    fileName.textContent = file.name;
+    isSending = true;
+    sendButton.disabled = true;
+    sendButton.classList.add('sending');
     
-    let progress = 0;
-    const interval = setInterval(() => {
-        progress += Math.random() * 15;
-        if (progress > 100) progress = 100;
+    setTimeout(() => {
+        isSending = false;
+        sendButton.disabled = false;
+        sendButton.classList.remove('sending');
         
-        progressFill.style.width = `${progress}%`;
-        progressPercentage.textContent = `${Math.round(progress)}%`;
-        
-        if (progress >= 100) {
-            clearInterval(interval);
-            
-            // Hide progress bar after a delay
-            setTimeout(() => {
-                fileUploadProgress.style.display = 'none';
-                progressFill.style.width = '0%';
-                progressPercentage.textContent = '0%';
-            }, 1000);
-        }
-    }, 200);
-}
-
-function previewFile(file) {
-    previewFileName.textContent = file.name;
-    previewFileSize.textContent = file.size;
-    
-    // Set appropriate icon
-    let iconClass = 'fa-file';
-    if (file.type === 'pdf') iconClass = 'fa-file-pdf';
-    if (file.type === 'image') iconClass = 'fa-file-image';
-    if (file.type === 'text') iconClass = 'fa-file-alt';
-    
-    previewFileIcon.className = `fas ${iconClass}`;
-    
-    // Generate preview content
-    let previewContent = '';
-    if (file.type === 'image') {
-        previewContent = `<img src="https://via.placeholder.com/500x300/2a4b7c/ffffff?text=Preview+of+${encodeURIComponent(file.name)}" alt="${file.name}" class="preview-image">`;
-    } else if (file.type === 'pdf') {
-        previewContent = `<div class="preview-text">[PDF Preview] "${file.name}"\n\nThis is a simulated preview of the PDF document. In a real application, this would show actual PDF content.\n\nFile size: ${file.size}\n\nISTARC documents often contain research papers, workshop materials, and scientific findings.</div>`;
-    } else {
-        previewContent = `<div class="preview-text">File: ${file.name}\nType: ${file.type.toUpperCase()}\nSize: ${file.size}\n\nThis file has been attached to the chat. You can download it for offline access.</div>`;
-    }
-    
-    previewBody.innerHTML = previewContent;
-    
-    // Show modal
-    filePreviewModal.classList.add('active');
+        showTemporaryNotification(`"${file.name}" attached successfully`);
+    }, 1500);
 }
 
 function formatFileSize(bytes) {
@@ -692,8 +747,8 @@ function getFileType(filename) {
 
 // ===== EVENT LISTENERS =====
 function initializeEventListeners() {
-    // Theme toggle with special behavior
-    themeToggle.addEventListener('click', handleThemeToggle);
+    // Initialize chat history toggle
+    initializeChatHistoryToggle();
     
     // New chat button
     newChatBtn.addEventListener('click', createNewChat);
@@ -701,7 +756,14 @@ function initializeEventListeners() {
     // Close history sidebar
     closeHistoryBtn.addEventListener('click', () => {
         chatHistorySidebar.classList.remove('active');
+        if (!footerInitialAnimation) {
+            mainFooter.classList.remove('initial-visible');
+        }
         showTemporaryNotification("Chat history closed");
+        toggleState = 0;
+        setTimeout(() => {
+            applyTheme('dark');
+        }, 100);
     });
     
     // Message input
@@ -711,8 +773,6 @@ function initializeEventListeners() {
             e.preventDefault();
             sendMessage();
         }
-        
-        // Auto-resize as user types
         autoResizeTextarea();
     });
     
@@ -721,18 +781,15 @@ function initializeEventListeners() {
     
     // Attach file button
     attachFileBtn.addEventListener('click', () => {
-        // Create a file input element
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = '.pdf,.jpg,.jpeg,.png,.txt,.doc,.docx';
         fileInput.style.display = 'none';
         fileInput.addEventListener('change', handleFileSelect);
         
-        // Trigger file selection
         document.body.appendChild(fileInput);
         fileInput.click();
         
-        // Clean up
         setTimeout(() => {
             document.body.removeChild(fileInput);
         }, 100);
@@ -756,43 +813,6 @@ function initializeEventListeners() {
         }
     });
     
-    // File preview modal
-    previewCloseBtn.addEventListener('click', () => {
-        filePreviewModal.classList.remove('active');
-    });
-    
-    closePreviewBtn.addEventListener('click', () => {
-        filePreviewModal.classList.remove('active');
-    });
-    
-    downloadPreviewBtn.addEventListener('click', () => {
-        showTemporaryNotification("Download started (simulated)");
-        setTimeout(() => {
-            filePreviewModal.classList.remove('active');
-        }, 500);
-    });
-    
-    // Close modal when clicking outside
-    filePreviewModal.addEventListener('click', (e) => {
-        if (e.target === filePreviewModal) {
-            filePreviewModal.classList.remove('active');
-        }
-    });
-    
-    // Close history sidebar when clicking outside on mobile
-    document.addEventListener('click', (e) => {
-        if (window.innerWidth <= 1100 && 
-            !chatHistorySidebar.contains(e.target) && 
-            !themeToggle.contains(e.target) && 
-            chatHistorySidebar.classList.contains('active')) {
-            
-            // Don't close if clicking on the new chat button
-            if (e.target !== newChatBtn && !newChatBtn.contains(e.target)) {
-                chatHistorySidebar.classList.remove('active');
-            }
-        }
-    });
-    
     // Initialize auto-resize
     autoResizeTextarea();
     
@@ -811,6 +831,23 @@ function initializeEventListeners() {
             });
         });
     });
+    
+    // Window resize handler
+    window.addEventListener('resize', () => {
+        if (window.innerWidth <= 1300 && !infoPanel.classList.contains('collapsed')) {
+            infoPanel.classList.add('collapsed');
+            mobileMenuToggle.innerHTML = '<i class="fas fa-chevron-down"></i>';
+        } else if (window.innerWidth > 1300 && infoPanel.classList.contains('collapsed')) {
+            infoPanel.classList.remove('collapsed');
+            mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+        }
+        
+        if (window.innerWidth <= 600) {
+            emojiPicker.style.right = '-50px';
+        } else {
+            emojiPicker.style.right = '0';
+        }
+    });
 }
 
 // ===== INITIALIZATION =====
@@ -818,26 +855,12 @@ function initializeApp() {
     initializeTheme();
     initializeEmojiPicker();
     initializeDeleteFunctionality();
+    initializeMobileMenu();
     initializeEventListeners();
     
-    // Add sample file attachment click handlers
-    document.querySelectorAll('.file-attachment').forEach(attachment => {
-        attachment.addEventListener('click', function() {
-            const fileName = this.getAttribute('data-file');
-            const fileSize = this.getAttribute('data-size');
-            
-            previewFile({
-                name: fileName,
-                size: fileSize,
-                type: getFileType(fileName)
-            });
-        });
-    });
-    
-    // Show a welcome notification
-    setTimeout(() => {
-        showTemporaryNotification("Welcome to OESTRON - ISTARC's Science Assistant!");
-    }, 1500);
+    if (window.innerWidth <= 600) {
+        emojiPicker.style.right = '-50px';
+    }
 }
 
 // Start the app when the page loads

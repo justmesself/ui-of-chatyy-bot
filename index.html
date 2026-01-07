@@ -5,44 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OESTRON - ISTARC Science Assistant</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto+Slab:wght@300;400;500&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Roboto+Slab:wght@300;400;500&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="dark-theme">
-    <!-- Main App Container -->
-    <div class="app-container">
-        
-        <!-- Left Side Info Panel - Modern Minimalist -->
-<div class="info-panel">
-    <div class="logo-container">
-      <div class="science-logo">
-    <img src="istarc.jpg" 
-         alt="logo" 
-         class="tech-logo-img">
-</div>
-        <div class="club-name">ISTARC</div>
-        <div class="club-fullform typing-container">
-            <span id="typingText"></span>
-            <span class="typing-cursor">|</span>
+    <!-- Opening Animation Overlay -->
+    <div class="opening-overlay active" id="openingOverlay">
+        <div class="opening-container">
+            <div class="opening-logo" id="openingLogo">
+                <img src="istarc.jpg" alt="ISTARC Logo" class="opening-logo-img">
+            </div>
+            <div class="opening-motto typing-container">
+                <span id="openingMottoText"></span>
+                <span class="typing-cursor">|</span>
+            </div>
         </div>
     </div>
     
-    <div class="club-info">
-        <h3><i class="fas fa-info-circle"></i> About OESTRON</h3>
-        <ul class="info-list">
-            <li><span class="bullet">•</span> <strong>Platform:</strong> AI Science Assistant</li>
-            <li><span class="bullet">•</span> <strong>Developer:</strong> ISTARC Research Wing</li>
-            <li><span class="bullet">•</span> <strong>Specialization:</strong> Science & Tech</li>
-            <li><span class="bullet">•</span> <strong>Knowledge:</strong> Multi-disciplinary</li>
-            <li><span class="bullet">•</span> <strong>Purpose:</strong> Educational Support</li>
-        </ul>
-    </div>
-    
-    <div class="assistant-intro">
-        <h3><i class="fas fa-robot"></i> Assistant Profile</h3>
-        <p>Specialized AI assistant developed by ISTARC IT Team for scientific education. Capable of explaining complex concepts, designing experiments, and assisting with research projects across multiple scientific disciplines.</p>
-    </div>
-</div>
+    <!-- Main App Container -->
+    <div class="app-container" id="mainApp">
+        
+        <!-- Left Side Info Panel -->
+        <div class="info-panel" id="infoPanel">
+            <!-- Mobile Toggle Button -->
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="logo-container">
+                <div class="club-name">ISTARC</div>
+            </div>
+            
+            <!-- Assistant Profile Box -->
+            <div class="assistant-intro">
+                <h3><i class="fas fa-robot"></i> Assistant Profile</h3>
+                <p>Specialized AI assistant developed by ISTARC IT Team for scientific education. Capable of explaining complex concepts, designing experiments, and assisting with research projects across multiple scientific disciplines.</p>
+            </div>
+            
+            <!-- About OESTRON Box -->
+            <div class="club-info">
+                <h3><i class="fas fa-info-circle"></i> About OESTRON</h3>
+                <ul class="info-list">
+                    <li><span class="bullet">•</span> <strong>Platform:</strong> AI Science Assistant</li>
+                    <li><span class="bullet">•</span> <strong>Developer:</strong> ISTARC Research Wing</li>
+                    <li><span class="bullet">•</span> <strong>Specialization:</strong> Science & Tech</li>
+                    <li><span class="bullet">•</span> <strong>Knowledge:</strong> Multi-disciplinary</li>
+                    <li><span class="bullet">•</span> <strong>Purpose:</strong> Educational Support</li>
+                    <li><span class="bullet">•</span> <strong>Status:</strong> AI Assistant developed by ISTARC</li>
+                </ul>
+            </div>
+        </div>
+        
         <!-- Main Chat Area -->
         <div class="main-chat-area" id="mainChatArea">
             
@@ -78,43 +91,8 @@
                 <div class="message assistant">
                     <div class="message-content">
                         <div class="message-sender"><i class="fas fa-robot"></i> OESTRON Assistant</div>
-                        <div class="message-text">Hello! I'm OESTRON, your AI assistant from ISTARC (Ideal Science & Technology Aiming Research Council). I'm here to help you with science projects, research, and creative thinking. How can I assist you today?</div>
+                        <div class="message-text">Hello! I'm OESTRON, your AI assistant from ISTARC (IDEAL SCIENCE & TECHNOLOGY AIMING RESEARCH COUNCIL). I'm here to help you with science projects, research, and creative thinking. How can I assist you today?</div>
                         <div class="message-time">10:00 AM</div>
-                        <button class="copy-message-btn" title="Copy message">
-                            <i class="far fa-copy"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="message user">
-                    <div class="message-content">
-                        <div class="message-sender"><i class="fas fa-user"></i> You</div>
-                        <div class="message-text">Can you tell me about ISTARC's activities?</div>
-                        <div class="file-attachment" data-file="istarc_activities.pdf" data-size="1.8 MB">
-                            <i class="fas fa-file-pdf"></i>
-                            <div class="file-name">istarc_activities.pdf</div>
-                            <div class="file-size">1.8 MB</div>
-                        </div>
-                        <div class="message-time">10:02 AM</div>
-                        <button class="copy-message-btn" title="Copy message">
-                            <i class="far fa-copy"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="message assistant">
-                    <div class="message-content">
-                        <div class="message-sender"><i class="fas fa-robot"></i> OESTRON Assistant</div>
-                        <div class="message-text">ISTARC organizes various scientific activities including workshops on emerging technologies, annual science festivals, research competitions, and hands-on experiments. The club focuses on practical learning and innovation.</div>
-                        <pre><code>// Example of scientific approach
-function scientificMethod(observation) {
-    const question = formulateQuestion(observation);
-    const hypothesis = createHypothesis(question);
-    const experiment = designExperiment(hypothesis);
-    const results = conductExperiment(experiment);
-    return analyzeResults(results);
-}</code></pre>
-                        <div class="message-time">10:03 AM</div>
                         <button class="copy-message-btn" title="Copy message">
                             <i class="far fa-copy"></i>
                         </button>
@@ -123,39 +101,13 @@ function scientificMethod(observation) {
                 
                 <!-- Typing Indicator -->
                 <div class="typing-indicator" id="typingIndicator" style="display: none;">
-                    <div class="gear-container">
-                        <div class="gear"><i class="fas fa-cog"></i></div>
-                        <div class="gear gear-small"><i class="fas fa-cog"></i></div>
+                    <div class="typing-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
                     </div>
                     <div class="typing-text">OESTRON is thinking...</div>
                 </div>
-                
-                <!-- Loading Animation -->
-                <div class="loading-container" id="loadingContainer" style="display: none;">
-                    <div class="orbital-loader">
-                        <div class="orbital-ring ring-1"></div>
-                        <div class="orbital-ring ring-2"></div>
-                        <div class="orbital-ring ring-3"></div>
-                    </div>
-                </div>
-                
-                <!-- Error Message -->
-                <div class="error-message" id="errorContainer" style="display: none;">
-                    <div class="error-icon"><i class="fas fa-exclamation-triangle"></i></div>
-                    <div class="error-text" id="errorText">Oops! Something went wrong. Try again!</div>
-                </div>
-            </div>
-            
-            <!-- File Upload Progress -->
-            <div class="file-upload-progress" id="fileUploadProgress">
-                <div class="progress-header">
-                    <span>Uploading file</span>
-                    <span id="fileName">document.pdf</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                <div class="progress-percentage" id="progressPercentage">0%</div>
             </div>
             
             <!-- Chat Input Area -->
@@ -190,6 +142,28 @@ function scientificMethod(observation) {
             </div>
         </div>
         
+<!-- Footer -->
+<footer class="main-footer" id="mainFooter">
+    <div class="footer-content">
+        <div class="footer-logo" id="footerLogo">
+            <img src="istarc.jpg" alt="ISTARC Logo" class="footer-logo-img">
+        </div>
+        
+        <div class="footer-animation">
+            <div class="fullform-typing typing-container">
+                <span id="footerTypingText"></span>
+                <span class="typing-cursor">|</span>
+            </div>
+        </div>
+        
+        <div class="footer-branding">
+            <div class="branding-container">
+                <div class="branding-line1">OESTRON IS A PRODUCT OF</div>
+                <div class="branding-line2">ISTARC</div>
+            </div>
+        </div>
+    </div>
+</footer>        
         <!-- Chat History Sidebar -->
         <div class="chat-history-sidebar" id="chatHistorySidebar">
             <div class="history-header">
@@ -209,31 +183,6 @@ function scientificMethod(observation) {
             <div class="empty-history" id="emptyHistoryMessage" style="display: none;">
                 <i class="fas fa-comment-slash"></i>
                 <p>No chat history yet.<br>Start a conversation!</p>
-            </div>
-        </div>
-    </div>
-    
-    <!-- File Preview Modal -->
-    <div class="file-preview-modal" id="filePreviewModal">
-        <div class="preview-content">
-            <button class="preview-close" id="previewCloseBtn" aria-label="Close preview">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="preview-header">
-                <div class="preview-icon">
-                    <i class="fas fa-file" id="previewFileIcon"></i>
-                </div>
-                <div class="preview-file-info">
-                    <h4 id="previewFileName">document.pdf</h4>
-                    <div class="preview-file-size" id="previewFileSize">2.4 MB</div>
-                </div>
-            </div>
-            <div class="preview-body" id="previewBody"></div>
-            <div class="preview-actions">
-                <button class="preview-btn" id="closePreviewBtn">Close</button>
-                <button class="preview-btn download" id="downloadPreviewBtn">
-                    <i class="fas fa-download"></i> Download
-                </button>
             </div>
         </div>
     </div>
