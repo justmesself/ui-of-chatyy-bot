@@ -874,34 +874,56 @@ textarea::-webkit-scrollbar-button {
 }
 
 /* Right branding text - PERFECTLY ALIGNED TWO LINES */
+/* Right branding text - RESPONSIVE VERSION */
 .footer-branding {
     flex: 0 0 auto;
-    width: 120px; /* Slightly wider for longer text */
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
-    text-align: right;
+    text-align: center;
+    min-width: 120px;
+    padding: 0 10px;
+    position: relative;
+    z-index: 10;
 }
 
 .branding-container {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
     line-height: 1.2;
     width: 100%;
+    transition: transform 0.3s ease;
+}
+
+/* When footer is partially visible, move branding text UP */
+.main-footer:not(.initial-visible):not(:hover) .branding-container {
+    transform: translateY(-10px); /* Adjust this value as needed */
+}
+
+/* When footer is fully visible (hovered or sidebar open), bring it back */
+.main-footer.initial-visible .branding-container,
+.main-footer:hover .branding-container,
+.chat-history-sidebar.active ~ .main-footer .branding-container {
+    transform: translateY(0);
 }
 
 .branding-line1 {
     font-family: 'Exo 2', sans-serif;
-    font-size: 0.5rem;
+    font-size: 0.75rem;
     color: var(--text-light);
     font-weight: 400;
     margin-bottom: 2px;
     letter-spacing: 0.5px;
     white-space: nowrap;
-    text-align: center;
     width: 100%;
+    transition: opacity 0.3s ease;
+}
+
+/* Fade out first line when footer is partially visible */
+.main-footer:not(.initial-visible):not(:hover) .branding-line1 {
+    opacity: 0.7;
 }
 
 .branding-line2 {
@@ -911,11 +933,16 @@ textarea::-webkit-scrollbar-button {
     font-size: 1.1rem;
     text-shadow: 0 0 5px rgba(96, 165, 250, 0.3);
     letter-spacing: 1px;
-    text-align: center;
     width: 100%;
     margin-top: 1px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
+/* Keep ISTARC visible when footer is partially visible */
+.main-footer:not(.initial-visible):not(:hover) .branding-line2 {
+    transform: translateY(-15px); /* Move ISTARC up */
+    opacity: 0.9;
+}
 .light-theme .branding-line2 {
     text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
 }
@@ -1584,11 +1611,27 @@ textarea::-webkit-scrollbar-button {
         width: 100%;
         padding: 4px 0;
     }
-    
-    .footer-branding {
+   .footer-branding {
         order: 2;
+        width: auto;
+        align-items: center;
+        margin-bottom: 5px;
+        min-width: auto;
+    }
+     .branding-container {
+        align-items: center;
         text-align: center;
     }
+     .main-footer:not(.initial-visible):not(:hover) .branding-container {
+        transform: translateY(-5px);
+    }
+    
+    .main-footer:not(.initial-visible):not(:hover) .branding-line2 {
+        transform: translateY(-10px);
+    }
+
+    
+
     
     .fullform-typing {
         font-size: 0.85rem;
