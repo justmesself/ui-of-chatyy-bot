@@ -2,7 +2,7 @@
 let currentTheme = 'dark';
 let chatHistory = [];
 let currentFile = null;
-let toggleState = 0;
+let toggleState = 0; // Now only used for theme toggle
 let typingEffectActive = true;
 let fullFormText = "IDEAL SCIENCE & TECHNOLOGY AIMING RESEARCH COUNCIL";
 let footerFullFormText = "IDEAL SCIENCE & TECHNOLOGY AIMING RESEARCH COUNCIL";
@@ -14,6 +14,7 @@ let mottoText = "Science in Creation, Not Annihilation";
 let mottoIndex = 0;
 let footerTypingInterval;
 let isSending = false;
+let isInitialThemeLoad = true; // NEW: Track initial theme load
 
 // Sample chat history data
 const sampleHistory = [
@@ -72,6 +73,7 @@ const scienceResponses = [
 
 // ===== DOM ELEMENT REFERENCES =====
 const themeToggle = document.getElementById('themeToggle');
+const historyToggleBtn = document.getElementById('historyToggleBtn'); // NEW
 const newChatBtn = document.getElementById('newChatBtn');
 const chatHistorySidebar = document.getElementById('chatHistorySidebar');
 const chatHistoryList = document.getElementById('chatHistoryList');
@@ -218,8 +220,8 @@ function initializeTheme() {
         toggleState = savedTheme === 'dark' ? 0 : 1;
     }
     
-    // Apply theme
-    applyTheme(currentTheme);
+    // Apply theme without notification
+    applyTheme(currentTheme, false); // false = don't show notification
     
     // Load chat history
     loadChatHistory();
@@ -228,73 +230,50 @@ function initializeTheme() {
     startOpeningAnimation();
 }
 
-function applyTheme(theme) {
+function applyTheme(theme, showNotification = true) {
     if (theme === 'dark') {
         document.body.classList.add('dark-theme');
         document.body.classList.remove('light-theme');
         openingOverlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
+        
+        // Only show notification if it's not initial load AND showNotification is true
+        if (!isInitialThemeLoad && showNotification) {
+            showTemporaryNotification("Switched to dark theme");
+        }
     } else {
         document.body.classList.remove('dark-theme');
         document.body.classList.add('light-theme');
         openingOverlay.style.backgroundColor = 'rgba(240, 244, 248, 0.95)';
+        
+        // Only show notification if it's not initial load AND showNotification is true
+        if (!isInitialThemeLoad && showNotification) {
+            showTemporaryNotification("Switched to light theme");
+        }
     }
+    
     currentTheme = theme;
     localStorage.setItem('chatTheme', theme);
+    
+    // After first theme application, set initial load to false
+    isInitialThemeLoad = false;
 }
 
-// ===== CHAT HISTORY TOGGLE =====
-function initializeChatHistoryToggle() {
-    themeToggle.addEventListener('click', (e) => {
-        if (toggleState === 0) {
-            // First click: switch to light theme
-            applyTheme('light');
-            toggleState = 1;
-            showTemporaryNotification("Switched to light theme");
-        } else if (toggleState === 1) {
-            // Second click: toggle chat history sidebar
-            e.preventDefault();
-            e.stopPropagation();
-            
-            chatHistorySidebar.classList.toggle('active');
-            
-            if (chatHistorySidebar.classList.contains('active')) {
-                // When opening sidebar, show footer fully
-                mainFooter.classList.add('initial-visible');
-                showTemporaryNotification("Chat history opened");
-            } else {
-                // When closing sidebar, hide footer partially if not in initial animation
-                if (!footerInitialAnimation) {
-                    mainFooter.classList.remove('initial-visible');
-                }
-                showTemporaryNotification("Chat history closed");
-            }
-            
-            toggleState = 0;
-            // Switch back to dark theme for next cycle
-            setTimeout(() => {
-                applyTheme('dark');
-            }, 100);
-        }
-    });
+// ===== CHAT HISTORY TOGGLE FUNCTIONALITY =====
+function toggleChatHistory() {
+    chatHistorySidebar.classList.toggle('active');
+    historyToggleBtn.classList.toggle('active');
     
-    // Close sidebar when clicking outside on desktop
-    document.addEventListener('click', (e) => {
-        if (window.innerWidth > 900 && 
-            chatHistorySidebar.classList.contains('active') &&
-            !chatHistorySidebar.contains(e.target) &&
-            !themeToggle.contains(e.target)) {
-            
-            chatHistorySidebar.classList.remove('active');
-            // Hide footer partially when sidebar closes
-            if (!footerInitialAnimation) {
-                mainFooter.classList.remove('initial-visible');
-            }
-            toggleState = 0;
-            setTimeout(() => {
-                applyTheme('dark');
-            }, 100);
+    if (chatHistorySidebar.classList.contains('active')) {
+        // When opening sidebar, show footer fully
+        mainFooter.classList.add('initial-visible');
+        showTemporaryNotification("Chat history opened");
+    } else {
+        // When closing sidebar, hide footer partially if not in initial animation
+        if (!footerInitialAnimation) {
+            mainFooter.classList.remove('initial-visible');
         }
-    });
+        showTemporaryNotification("Chat history closed");
+    }
 }
 
 // ===== MOBILE MENU TOGGLE =====
@@ -662,34 +641,54 @@ function showError(errorMessage) {
 // ===== FIXED: TOP POPUP NOTIFICATION WITH LOWER OPACITY =====
 function showTemporaryNotification(message) {
     const notification = document.createElement('div');
+    
+    // Check current theme to apply appropriate color
+    let backgroundColor, textColor;
+    if (currentTheme === 'light') {
+        // White gradient for light theme
+        backgroundColor = 'linear-gradient(180deg, #F8FAFF 0%, #EEF2F9 100%)';
+        textColor = '#1e293b'; // Dark text for white background
+    } else {
+        // Blue for dark theme
+        backgroundColor = 'var(--accent-color)';
+        textColor = 'white';
+    }
+    
     notification.style.cssText = `
         position: fixed;
         top: 140px; /* Position below OESTRON logo */
         left: 50%;
         transform: translateX(-50%) translateY(-30px);
-        background-color: var(--accent-color);
-        color: white;
+        background: ${backgroundColor};
+        color: ${textColor};
         padding: 12px 24px;
         border-radius: 12px;
         z-index: 10000;
         font-family: 'Exo 2', sans-serif;
         font-size: 0.95rem;
         font-weight: 500;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
         transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         white-space: nowrap;
         text-align: center;
         backdrop-filter: blur(5px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        opacity: 0.7; /* Lower opacity */
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        opacity: 0.9; /* Slightly higher opacity for better readability */
     `;
+    
+    // Add border color based on theme
+    if (currentTheme === 'light') {
+        notification.style.border = '1px solid rgba(226, 232, 240, 0.8)';
+    } else {
+        notification.style.border = '1px solid rgba(96, 165, 250, 0.3)';
+    }
     
     notification.textContent = message;
     document.body.appendChild(notification);
     
     setTimeout(() => {
         notification.style.transform = 'translateX(-50%) translateY(0)';
-        notification.style.opacity = '0.7'; /* Lower opacity */
+        notification.style.opacity = '0.9'; /* Slightly higher opacity */
     }, 10);
     
     setTimeout(() => {
@@ -747,23 +746,46 @@ function getFileType(filename) {
 
 // ===== EVENT LISTENERS =====
 function initializeEventListeners() {
-    // Initialize chat history toggle
-    initializeChatHistoryToggle();
+    // Theme toggle - now only changes theme
+    themeToggle.addEventListener('click', () => {
+        if (currentTheme === 'dark') {
+            applyTheme('light', true); // true = show notification
+        } else {
+            applyTheme('dark', true); // true = show notification
+        }
+    });
+    
+    // History toggle button - NEW
+    historyToggleBtn.addEventListener('click', toggleChatHistory);
     
     // New chat button
     newChatBtn.addEventListener('click', createNewChat);
     
-    // Close history sidebar
+    // Close history sidebar button
     closeHistoryBtn.addEventListener('click', () => {
         chatHistorySidebar.classList.remove('active');
+        historyToggleBtn.classList.remove('active');
         if (!footerInitialAnimation) {
             mainFooter.classList.remove('initial-visible');
         }
         showTemporaryNotification("Chat history closed");
-        toggleState = 0;
-        setTimeout(() => {
-            applyTheme('dark');
-        }, 100);
+    });
+    
+    // Close sidebar when clicking outside on desktop
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth > 900 && 
+            chatHistorySidebar.classList.contains('active') &&
+            !chatHistorySidebar.contains(e.target) &&
+            !historyToggleBtn.contains(e.target) &&
+            !closeHistoryBtn.contains(e.target)) {
+            
+            chatHistorySidebar.classList.remove('active');
+            historyToggleBtn.classList.remove('active');
+            if (!footerInitialAnimation) {
+                mainFooter.classList.remove('initial-visible');
+            }
+            showTemporaryNotification("Chat history closed");
+        }
     });
     
     // Message input
