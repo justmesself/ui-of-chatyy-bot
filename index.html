@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OESTRON - ISTARC Science Assistant</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Roboto+Slab:wght@300;400;500&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="dark-theme">
@@ -24,41 +24,49 @@
     
     <!-- Main App Container -->
     <div class="app-container" id="mainApp">
-        
         <!-- Left Side Info Panel -->
         <div class="info-panel" id="infoPanel">
-            <!-- Mobile Toggle Button -->
             <button class="mobile-menu-toggle" id="mobileMenuToggle">
                 <i class="fas fa-bars"></i>
             </button>
             
-            <div class="logo-container">
-                <div class="club-name">ISTARC</div>
-            </div>
-            
-            <!-- Assistant Profile Box -->
             <div class="assistant-intro">
-                <h3><i class="fas fa-robot"></i> Assistant Profile</h3>
-                <p>Specialized AI assistant developed by ISTARC IT Team for scientific education. Capable of explaining complex concepts, designing experiments, and assisting with research projects across multiple scientific disciplines.</p>
+                <h3><i class="fas fa-brain"></i> AI Assistant Profile</h3>
+                <p>OESTRON is an advanced artificial intelligence system developed to facilitate scientific inquiry and support educational excellence through precise, evidence-based responses.</p>
+                <div class="capabilities">
+                    <div class="capability-item"><i class="fas fa-check-circle"></i> Research Methodology</div>
+                    <div class="capability-item"><i class="fas fa-check-circle"></i> Data Analysis</div>
+                    <div class="capability-item"><i class="fas fa-check-circle"></i> Academic Writing</div>
+                    <div class="capability-item"><i class="fas fa-check-circle"></i> Experiment Design</div>
+                    <div class="capability-item"><i class="fas fa-check-circle"></i> Literature Review</div>
+                </div>
             </div>
             
-            <!-- About OESTRON Box -->
-            <div class="club-info">
-                <h3><i class="fas fa-info-circle"></i> About OESTRON</h3>
-                <ul class="info-list">
-                    <li><span class="bullet">•</span> <strong>Platform:</strong> AI Science Assistant</li>
-                    <li><span class="bullet">•</span> <strong>Developer:</strong> ISTARC Research Wing</li>
-                    <li><span class="bullet">•</span> <strong>Specialization:</strong> Science & Tech</li>
-                    <li><span class="bullet">•</span> <strong>Knowledge:</strong> Multi-disciplinary</li>
-                    <li><span class="bullet">•</span> <strong>Purpose:</strong> Educational Support</li>
-                    <li><span class="bullet">•</span> <strong>Status:</strong> AI Assistant developed by ISTARC</li>
+            <div class="about-box">
+                <h3><i class="fas fa-info-circle"></i> About This Interface</h3>
+                <p>This platform serves as the primary interface for OESTRON AI, specifically engineered for educational and research applications. It combines intuitive design with powerful AI capabilities.</p>
+                <ul class="feature-list">
+                    <li><i class="fas fa-rocket"></i> Optimized for extended research sessions</li>
+                    <li><i class="fas fa-shield-alt"></i> Academic integrity protocols</li>
+                    <li><i class="fas fa-book"></i> Multidisciplinary knowledge integration</li>
+                    <li><i class="fas fa-chart-line"></i> Real-time data processing</li>
                 </ul>
+            </div>
+            
+            <div class="credits-section">
+                <div class="credit-text">
+                    <span class="credit-label">Developed by</span>
+                    <span class="credit-name">Talha Jubaer</span>
+                </div>
+                <div class="credit-text">
+                    <span class="credit-label">Scientific Framework</span>
+                    <span class="credit-name">ISTARC Research Council</span>
+                </div>
             </div>
         </div>
         
         <!-- Main Chat Area -->
         <div class="main-chat-area" id="mainChatArea">
-            
             <!-- Chat Header -->
             <div class="chat-header">
                 <div class="header-logo">
@@ -66,23 +74,26 @@
                 </div>
                 
                 <div class="utility-controls">
-                    <div class="theme-toggle-wrapper">
-                        <button id="themeToggle" aria-label="Toggle theme">
-                            <div class="toggle-slider"><i class="fas fa-adjust"></i></div>
-                            <span class="toggle-label light-label">L</span>
-                            <span class="toggle-label dark-label">D</span>
+                    <div class="utility-dropdown">
+                        <button class="dropdown-toggle" id="dropdownToggle" aria-label="Menu">
+                            <i class="fas fa-bars"></i>
                         </button>
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <button class="dropdown-item" id="themeToggleDropdown">
+                                <i class="fas fa-palette"></i> Change Theme
+                            </button>
+                            <button class="dropdown-item" id="newChatDropdown">
+                                <i class="fas fa-plus"></i> New Chat
+                            </button>
+                            <button class="dropdown-item" id="historyToggleDropdown">
+                                <i class="fas fa-history"></i> Chat History
+                            </button>
+                        </div>
                     </div>
-                    <button id="historyToggleBtn" class="history-toggle-btn" aria-label="Toggle chat history">
-                    <i class="fas fa-history"></i>
-                    </button>
-                    <button id="newChatBtn" class="new-chat-btn" aria-label="New chat">
-                        <i class="fas fa-plus"></i>
-                    </button>
                 </div>
             </div>
             
-            <!-- Watermark in Chat Container -->
+            <!-- Watermark -->
             <div class="watermark">
                 <div class="watermark-text">ISTARC</div>
                 <div class="watermark-subtext">Science in Creation</div>
@@ -90,11 +101,10 @@
             
             <!-- Chat Messages Container -->
             <div class="chat-messages-container" id="chatMessages">
-                <!-- Initial messages -->
                 <div class="message assistant">
                     <div class="message-content">
                         <div class="message-sender"><i class="fas fa-robot"></i> OESTRON Assistant</div>
-                        <div class="message-text">Hello! I'm OESTRON, your AI assistant from ISTARC (IDEAL SCIENCE & TECHNOLOGY AIMING RESEARCH COUNCIL). I'm here to help you with science projects, research, and creative thinking. How can I assist you today?</div>
+                        <div class="message-text">Hello! I'm OESTRON, your AI assistant specialized in scientific research and education. I'm here to help you with science projects, research, and creative thinking. How can I assist you today?</div>
                         <div class="message-time">10:00 AM</div>
                         <button class="copy-message-btn" title="Copy message">
                             <i class="far fa-copy"></i>
@@ -102,7 +112,6 @@
                     </div>
                 </div>
                 
-                <!-- Typing Indicator -->
                 <div class="typing-indicator" id="typingIndicator" style="display: none;">
                     <div class="typing-dots">
                         <div class="dot"></div>
@@ -131,7 +140,6 @@
                         </div>
                     </div>
                     
-                    <!-- Emoji Picker -->
                     <div class="emoji-picker-container" id="emojiPicker">
                         <div class="emoji-header">
                             <span>Science Emojis</span>
@@ -145,28 +153,29 @@
             </div>
         </div>
         
-<!-- Footer -->
-<footer class="main-footer" id="mainFooter">
-    <div class="footer-content">
-        <div class="footer-logo" id="footerLogo">
-            <img src="istarc.jpg" alt="ISTARC Logo" class="footer-logo-img">
-        </div>
-        
-        <div class="footer-animation">
-            <div class="fullform-typing typing-container">
-                <span id="footerTypingText"></span>
-                <span class="typing-cursor">|</span>
+        <!-- Footer -->
+        <footer class="main-footer" id="mainFooter">
+            <div class="footer-content">
+                <div class="footer-logo" id="footerLogo">
+                    <img src="istarc.jpg" alt="ISTARC Logo" class="footer-logo-img">
+                </div>
+                
+                <div class="footer-animation">
+                    <div class="fullform-typing typing-container">
+                        <span id="footerTypingText"></span>
+                        <span class="typing-cursor">|</span>
+                    </div>
+                </div>
+                
+                <div class="footer-branding">
+                    <div class="branding-container">
+                        <div class="branding-line1">OESTRON IS A PRODUCT OF</div>
+                        <div class="branding-line2">ISTARC</div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </footer>
         
-        <div class="footer-branding">
-            <div class="branding-container">
-                <div class="branding-line1">OESTRON IS A PRODUCT OF</div>
-                <div class="branding-line2">ISTARC</div>
-            </div>
-        </div>
-    </div>
-</footer>        
         <!-- Chat History Sidebar -->
         <div class="chat-history-sidebar" id="chatHistorySidebar">
             <div class="history-header">
@@ -190,7 +199,24 @@
         </div>
     </div>
     
-    <!-- Delete Confirmation Modal (will be added by JS) -->
+    <!-- Delete Confirmation Modal -->
+    <div class="delete-confirmation-modal" id="deleteConfirmationModal">
+        <div class="delete-confirmation-content">
+            <div class="delete-confirmation-header">
+                <div class="delete-confirmation-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h4>Delete All History</h4>
+            </div>
+            <div class="delete-confirmation-body">
+                Are you sure you want to delete all chat history? This action cannot be undone.
+            </div>
+            <div class="delete-confirmation-actions">
+                <button class="delete-cancel-btn" id="deleteCancelBtn">Cancel</button>
+                <button class="delete-confirm-btn" id="deleteConfirmBtn">Delete All</button>
+            </div>
+        </div>
+    </div>
     
     <script src="script.js"></script>
 </body>

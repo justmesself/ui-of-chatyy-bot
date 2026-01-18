@@ -1,8 +1,14 @@
+console.log("Script.js is loaded!");
+
+// Test if elements exist
+console.log("chatHistorySidebar:", document.getElementById('chatHistorySidebar'));
+console.log("historyToggleDropdown:", document.getElementById('historyToggleDropdown'));
+
 // ===== GLOBAL VARIABLES =====
 let currentTheme = 'dark';
 let chatHistory = [];
 let currentFile = null;
-let toggleState = 0; // Now only used for theme toggle
+let toggleState = 0;
 let typingEffectActive = true;
 let fullFormText = "IDEAL SCIENCE & TECHNOLOGY AIMING RESEARCH COUNCIL";
 let footerFullFormText = "IDEAL SCIENCE & TECHNOLOGY AIMING RESEARCH COUNCIL";
@@ -14,7 +20,7 @@ let mottoText = "Science in Creation, Not Annihilation";
 let mottoIndex = 0;
 let footerTypingInterval;
 let isSending = false;
-let isInitialThemeLoad = true; // NEW: Track initial theme load
+let isInitialThemeLoad = true;
 
 // Sample chat history data
 const sampleHistory = [
@@ -27,54 +33,54 @@ const sampleHistory = [
 // Science & tech emojis only
 const scienceEmojis = ["🔬", "⚗️", "🧪", "🧬", "🔭", "💻", "📡", "⚛️", "🧮", "🔋", "💾", "🧲", "🌡️", "🧫", "🔍", "📊", "🧠", "⚙️", "🔧", "📐"];
 
-// ISTARC Facts for responses
-const istarcFacts = [
-    "ISTARC (IDEAL SCIENCE & TECHNOLOGY AIMING RESEARCH COUNCIL) was established in 2018 with a vision to promote scientific temper among students.",
-    "We have organized over 50 workshops and science festivals since our inception, reaching more than 5000 students.",
-    "Our club has more than 500 active student members passionate about science, technology, and innovation.",
-    "ISTARC focuses on 'Science in Creation, not Annihilation' as our core philosophy - promoting constructive scientific applications.",
-    "We are part of Ideal Science College, dedicated to fostering scientific thinking and research culture among students.",
-    "Our events include hands-on experiments, research competitions, tech workshops, and national science fair participations.",
-    "ISTARC encourages students to participate in national and international science fairs, with several winning projects.",
-    "We believe in practical learning and applying scientific methods to real-world problems through collaborative projects."
+// OESTRON Facts for responses
+const oestronFacts = [
+    "OESTRON is designed to maintain academic integrity in all responses, providing accurate, evidence-based information across scientific disciplines.",
+    "The system utilizes a comprehensive knowledge base spanning physics, chemistry, biology, mathematics, and computer science for multidisciplinary support.",
+    "All responses are generated with consideration for educational value, prioritizing clarity, accuracy, and methodological rigor.",
+    "OESTRON can assist with literature reviews, experimental design, data interpretation, and scientific communication protocols.",
+    "Regular updates ensure the knowledge base remains current with scientific developments and emerging research methodologies.",
+    "Privacy protocols ensure that all user interactions remain confidential and are not stored beyond the current session.",
+    "The assistant is programmed to recognize and clarify potential misunderstandings in scientific terminology and concepts.",
+    "OESTRON emphasizes critical thinking and evidence evaluation in all responses, encouraging scientific literacy."
 ];
 
 // Science & Math Facts
 const scienceMathFacts = [
-    "The speed of light is approximately 299,792,458 meters per second - a fundamental constant in physics.",
-    "Pi (π) is an irrational number that continues infinitely without repeating. Mathematicians have calculated over 50 trillion digits of Pi!",
-    "Water expands when it freezes, which is unusual as most substances contract when they solidify.",
-    "The human brain contains about 86 billion neurons, each connected to thousands of other neurons.",
-    "DNA, if uncoiled, would stretch from the Earth to the Sun and back about 600 times.",
-    "A single bolt of lightning contains enough energy to toast 100,000 slices of bread.",
-    "The Great Pyramid of Giza was the tallest man-made structure in the world for over 3,800 years.",
-    "Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old and still perfectly edible.",
-    "There are more possible iterations of a game of chess than there are atoms in the known universe.",
-    "The Earth's core is as hot as the surface of the Sun - about 5,500°C (9,932°F)."
+    "The human brain contains approximately 86 billion neurons, each capable of forming thousands of synaptic connections.",
+    "Water exhibits unique properties including high surface tension and expansion upon freezing, which are essential for biological systems.",
+    "DNA from a single human cell, if unraveled, would stretch approximately two meters in length.",
+    "The speed of light in vacuum (299,792,458 m/s) represents the universe's ultimate speed limit according to relativity theory.",
+    "Carbon's unique ability to form four stable covalent bonds makes it the fundamental element of organic chemistry and life.",
+    "Quantum entanglement demonstrates that particles can remain interconnected such that the state of one instantly influences the other.",
+    "The Earth's magnetic field, generated by molten iron circulation in the outer core, provides crucial protection from solar radiation.",
+    "Pi (π) is an irrational and transcendental number that continues infinitely without repetition or pattern."
 ];
 
-// Greeting responses with ISTARC info
+// Professional greeting responses
 const greetingResponses = [
-    "Hello! I'm OESTRON, your science assistant from ISTARC (IDEAL SCIENCE & TECHNOLOGY AIMING RESEARCH COUNCIL). How can I help you explore science today? Did you know ISTARC has organized over 50 science workshops since 2018?",
-    "Hi there! Ready to dive into some scientific exploration? I'm here to assist with all your science and tech questions. As part of ISTARC, we focus on 'Science in Creation, not Annihilation'.",
-    "Greetings! I'm OESTRON from ISTARC - your gateway to understanding science and technology in creative ways. Our club has 500+ active members passionate about innovation!",
-    "Welcome! I'm OESTRON, developed by ISTARC's IT team. I can help with research, experiments, or scientific concepts. Fun fact: ISTARC encourages participation in national science fairs!",
-    "Hello! Science awaits! I'm here to help you with projects, research, or just satisfying your scientific curiosity. ISTARC believes in practical learning through hands-on experiments."
+    "Hello! I'm OESTRON, your science assistant specialized in scientific research and education. How can I help you explore science today?",
+    "Hi there! Ready to dive into some scientific exploration? I'm here to assist with all your science and tech questions.",
+    "Greetings! I'm OESTRON - your gateway to understanding science and technology in creative ways.",
+    "Welcome! I'm OESTRON, developed to assist with research, experiments, or scientific concepts.",
+    "Hello! Science awaits! I'm here to help you with projects, research, or just satisfying your scientific curiosity."
 ];
 
-// Science responses
-const scienceResponses = [
-    "Based on scientific principles, I'd suggest approaching this systematically. The scientific method teaches us to observe, hypothesize, experiment, and analyze.",
-    "From a research perspective, we could approach this by first reviewing existing literature, then designing a controlled experiment to test our hypothesis.",
-    "The scientific method teaches us to be systematic: make observations, ask questions, form hypotheses, conduct experiments, and draw conclusions.",
-    "In laboratory settings, this would be tested using controlled experiments with proper variables and replication for statistical significance.",
-    "Research shows that the most effective approach is to break down complex problems into smaller, testable components."
+// Academic responses
+const academicResponses = [
+    "From a methodological perspective, this inquiry would benefit from a systematic approach beginning with literature review, followed by hypothesis formulation and experimental design.",
+    "The scientific method provides a robust framework for investigation: observation, question, hypothesis, prediction, experiment, and analysis.",
+    "In research contexts, reproducibility and statistical significance are paramount. Control groups, randomization, and adequate sample sizes strengthen experimental validity.",
+    "Peer-reviewed literature represents the most reliable source of scientific information, though critical evaluation of methodology and potential biases remains essential.",
+    "Interdisciplinary approaches often yield novel insights, as concepts and methods from one field can provide solutions to problems in another."
 ];
 
 // ===== DOM ELEMENT REFERENCES =====
-const themeToggle = document.getElementById('themeToggle');
-const historyToggleBtn = document.getElementById('historyToggleBtn'); // NEW
-const newChatBtn = document.getElementById('newChatBtn');
+const dropdownToggle = document.getElementById('dropdownToggle');
+const dropdownMenu = document.getElementById('dropdownMenu');
+const themeToggleDropdown = document.getElementById('themeToggleDropdown');
+const newChatDropdown = document.getElementById('newChatDropdown');
+const historyToggleDropdown = document.getElementById('historyToggleDropdown');
 const chatHistorySidebar = document.getElementById('chatHistorySidebar');
 const chatHistoryList = document.getElementById('chatHistoryList');
 const emptyHistoryMessage = document.getElementById('emptyHistoryMessage');
@@ -87,8 +93,6 @@ const emojiPickerBtn = document.getElementById('emojiPickerBtn');
 const emojiPicker = document.getElementById('emojiPicker');
 const emojiGrid = document.getElementById('emojiGrid');
 const typingIndicator = document.getElementById('typingIndicator');
-const errorContainer = document.getElementById('errorContainer');
-const errorText = document.getElementById('errorText');
 const emojiCloseBtn = document.getElementById('emojiCloseBtn');
 const openingOverlay = document.getElementById('openingOverlay');
 const openingLogo = document.getElementById('openingLogo');
@@ -98,32 +102,8 @@ const mainFooter = document.getElementById('mainFooter');
 const footerTypingText = document.getElementById('footerTypingText');
 const mobileMenuToggle = document.getElementById('mobileMenuToggle');
 const infoPanel = document.getElementById('infoPanel');
-const footerLogo = document.getElementById('footerLogo');
 const deleteAllBtn = document.getElementById('deleteAllBtn');
-
-// Create delete confirmation modal
-const deleteConfirmationModal = document.createElement('div');
-deleteConfirmationModal.className = 'delete-confirmation-modal';
-deleteConfirmationModal.innerHTML = `
-    <div class="delete-confirmation-content">
-        <div class="delete-confirmation-header">
-            <div class="delete-confirmation-icon">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <h4>Delete All History</h4>
-        </div>
-        <div class="delete-confirmation-body">
-            Are you sure you want to delete all chat history? This action cannot be undone.
-        </div>
-        <div class="delete-confirmation-actions">
-            <button class="delete-cancel-btn" id="deleteCancelBtn">Cancel</button>
-            <button class="delete-confirm-btn" id="deleteConfirmBtn">Delete All</button>
-        </div>
-    </div>
-`;
-
-// Append the modal to body
-document.body.appendChild(deleteConfirmationModal);
+const deleteConfirmationModal = document.getElementById('deleteConfirmationModal');
 const deleteCancelBtn = document.getElementById('deleteCancelBtn');
 const deleteConfirmBtn = document.getElementById('deleteConfirmBtn');
 
@@ -145,13 +125,11 @@ function startOpeningAnimation() {
                     mainApp.style.display = 'flex';
                     openingAnimationComplete = true;
                     
-                    // Set footer to initial visible state
                     mainFooter.classList.add('initial-visible');
-                    
                     startFooterTypingEffect();
                     
                     setTimeout(() => {
-                        showTemporaryNotification("Welcome to OESTRON - ISTARC's Science Assistant!");
+                        showTemporaryNotification("OESTRON initialized. Ready for scientific inquiry.");
                     }, 500);
                 }, 800);
             }, 300);
@@ -160,10 +138,7 @@ function startOpeningAnimation() {
 }
 
 function startLogoAnimation() {
-    // Add drop animation to logo
     openingLogo.style.animation = 'logoToFooter 2s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards';
-    
-    // Fade out motto text quickly
     openingMottoText.style.transition = 'opacity 0.3s ease';
     openingMottoText.style.opacity = '0';
 }
@@ -185,7 +160,6 @@ function startFooterTypingEffect() {
                 footerTypingText.textContent = footerFullFormText.substring(0, footerTypingIndex);
                 footerTypingIndex++;
                 
-                // When first typing completes
                 if (footerTypingIndex > footerFullFormText.length) {
                     setTimeout(() => {
                         if (mainFooter.classList.contains('initial-visible')) {
@@ -213,20 +187,14 @@ function startFooterTypingEffect() {
 
 // ===== THEME MANAGEMENT =====
 function initializeTheme() {
-    // Check for saved theme preference
     const savedTheme = localStorage.getItem('chatTheme');
     if (savedTheme) {
         currentTheme = savedTheme;
         toggleState = savedTheme === 'dark' ? 0 : 1;
     }
     
-    // Apply theme without notification
-    applyTheme(currentTheme, false); // false = don't show notification
-    
-    // Load chat history
+    applyTheme(currentTheme, false);
     loadChatHistory();
-    
-    // Start opening animation
     startOpeningAnimation();
 }
 
@@ -236,16 +204,14 @@ function applyTheme(theme, showNotification = true) {
         document.body.classList.remove('light-theme');
         openingOverlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
         
-        // Only show notification if it's not initial load AND showNotification is true
         if (!isInitialThemeLoad && showNotification) {
             showTemporaryNotification("Switched to dark theme");
         }
     } else {
         document.body.classList.remove('dark-theme');
         document.body.classList.add('light-theme');
-        openingOverlay.style.backgroundColor = 'rgba(240, 244, 248, 0.95)';
+        openingOverlay.style.backgroundColor = 'rgba(189, 191, 191, 0.95)';
         
-        // Only show notification if it's not initial load AND showNotification is true
         if (!isInitialThemeLoad && showNotification) {
             showTemporaryNotification("Switched to light theme");
         }
@@ -253,27 +219,82 @@ function applyTheme(theme, showNotification = true) {
     
     currentTheme = theme;
     localStorage.setItem('chatTheme', theme);
-    
-    // After first theme application, set initial load to false
     isInitialThemeLoad = false;
 }
 
-// ===== CHAT HISTORY TOGGLE FUNCTIONALITY =====
+// ===== DROPDOWN FUNCTIONALITY =====
+function initializeDropdown() {
+    console.log("=== Initializing Dropdown ===");
+    
+    dropdownToggle.addEventListener('click', (e) => {
+        console.log("Hamburger menu clicked");
+        e.stopPropagation();
+        dropdownMenu.classList.toggle('active');
+    });
+    
+    document.addEventListener('click', (e) => {
+        if (!dropdownMenu.contains(e.target) && e.target !== dropdownToggle) {
+            dropdownMenu.classList.remove('active');
+        }
+    });
+    
+    themeToggleDropdown.addEventListener('click', () => {
+        dropdownMenu.classList.remove('active');
+        if (currentTheme === 'dark') {
+            applyTheme('light', true);
+        } else {
+            applyTheme('dark', true);
+        }
+    });
+    
+    newChatDropdown.addEventListener('click', () => {
+        dropdownMenu.classList.remove('active');
+        createNewChat();
+    });
+    
+    // FIXED: Chat history toggle button
+    historyToggleDropdown.addEventListener('click', () => {
+        console.log("=== HISTORY TOGGLE CLICKED ===");
+        dropdownMenu.classList.remove('active');
+        toggleChatHistory();
+    });
+    
+    console.log("All dropdown event listeners attached");
+}
+
+// ===== CHAT HISTORY TOGGLE FUNCTIONALITY - FIXED =====
 function toggleChatHistory() {
+    console.log("=== toggleChatHistory FUNCTION CALLED ===");
+    
+    // Remove any inline styles that might interfere
+    chatHistorySidebar.style.removeProperty('transform');
+    chatHistorySidebar.style.removeProperty('display');
+    chatHistorySidebar.style.removeProperty('opacity');
+    chatHistorySidebar.style.removeProperty('visibility');
+    
+    // Toggle the active class
+    const isOpening = !chatHistorySidebar.classList.contains('active');
     chatHistorySidebar.classList.toggle('active');
-    historyToggleBtn.classList.toggle('active');
+    
+    console.log("Sidebar active after toggle:", chatHistorySidebar.classList.contains('active'));
+    console.log("Computed transform:", window.getComputedStyle(chatHistorySidebar).transform);
     
     if (chatHistorySidebar.classList.contains('active')) {
-        // When opening sidebar, show footer fully
+        // SIDEBAR IS NOW OPEN
+        console.log("Sidebar is OPEN");
         mainFooter.classList.add('initial-visible');
         showTemporaryNotification("Chat history opened");
     } else {
-        // When closing sidebar, hide footer partially if not in initial animation
+        // SIDEBAR IS NOW CLOSED
+        console.log("Sidebar is CLOSED");
         if (!footerInitialAnimation) {
             mainFooter.classList.remove('initial-visible');
         }
         showTemporaryNotification("Chat history closed");
     }
+    
+    // Force a reflow to ensure CSS updates
+    chatHistorySidebar.offsetHeight;
 }
 
 // ===== MOBILE MENU TOGGLE =====
@@ -290,7 +311,6 @@ function initializeMobileMenu() {
         }
     });
     
-    // Auto-collapse on mobile
     if (window.innerWidth <= 1300) {
         infoPanel.classList.add('collapsed');
         mobileMenuToggle.innerHTML = '<i class="fas fa-chevron-down"></i>';
@@ -299,21 +319,16 @@ function initializeMobileMenu() {
 
 // ===== NEW CHAT FUNCTIONALITY =====
 function createNewChat() {
-    // Clear current chat (keep only the first welcome message)
     const messages = chatMessages.querySelectorAll('.message');
     messages.forEach((msg, index) => {
         if (index > 0) msg.remove();
     });
     
-    // Reset input
     messageInput.value = '';
     currentFile = null;
     autoResizeTextarea();
     
-    // Show notification
     showTemporaryNotification("New chat started");
-    
-    // Update history
     updateChatHistory();
 }
 
@@ -330,23 +345,16 @@ function updateChatHistory() {
 
 // ===== DELETE FUNCTIONALITY =====
 function initializeDeleteFunctionality() {
-    // Delete all button
     deleteAllBtn.addEventListener('click', showDeleteConfirmation);
-    
-    // Cancel button in modal
     deleteCancelBtn.addEventListener('click', hideDeleteConfirmation);
-    
-    // Confirm button in modal
     deleteConfirmBtn.addEventListener('click', deleteAllHistory);
     
-    // Close modal when clicking outside
     deleteConfirmationModal.addEventListener('click', (e) => {
         if (e.target === deleteConfirmationModal) {
             hideDeleteConfirmation();
         }
     });
     
-    // Close modal with Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && deleteConfirmationModal.classList.contains('active')) {
             hideDeleteConfirmation();
@@ -367,38 +375,24 @@ function hideDeleteConfirmation() {
 }
 
 function deleteAllHistory() {
-    // Clear chat history
     chatHistory = [];
-    
-    // Update the history list
     updateHistoryList();
-    
-    // Hide confirmation modal
     hideDeleteConfirmation();
-    
-    // Show notification
     showTemporaryNotification("All chat history deleted");
 }
 
 function deleteSingleHistoryItem(id) {
-    // Find the item index
     const index = chatHistory.findIndex(item => item.id === id);
     
     if (index !== -1) {
-        // Remove the item
         const deletedItem = chatHistory.splice(index, 1)[0];
-        
-        // Update the history list
         updateHistoryList();
-        
-        // Show notification
         showTemporaryNotification(`"${deletedItem.title}" deleted`);
     }
 }
 
 // ===== CHAT HISTORY MANAGEMENT =====
 function loadChatHistory() {
-    // In a real app, this would load from localStorage or an API
     chatHistory = [...sampleHistory];
     updateHistoryList();
 }
@@ -429,7 +423,6 @@ function updateHistoryList() {
             </button>
         `;
         
-        // Click to load chat
         historyItem.addEventListener('click', (e) => {
             if (!e.target.closest('.history-item-delete')) {
                 document.querySelectorAll('.history-item').forEach(el => {
@@ -441,7 +434,6 @@ function updateHistoryList() {
             }
         });
         
-        // Delete button for individual item
         const deleteBtn = historyItem.querySelector('.history-item-delete');
         deleteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -457,10 +449,8 @@ function updateHistoryList() {
 
 // ===== EMOJI PICKER =====
 function initializeEmojiPicker() {
-    // Clear existing emojis
     emojiGrid.innerHTML = '';
     
-    // Populate science emojis only
     scienceEmojis.forEach(emoji => {
         const emojiBtn = document.createElement('button');
         emojiBtn.className = 'emoji-btn-small';
@@ -483,7 +473,6 @@ function insertEmoji(emoji) {
     messageInput.focus();
     messageInput.selectionStart = cursorPos + emoji.length;
     messageInput.selectionEnd = cursorPos + emoji.length;
-    
     autoResizeTextarea();
 }
 
@@ -535,7 +524,6 @@ function addMessage(content, isUser = false, fileAttached = null) {
     
     chatMessages.appendChild(messageDiv);
     
-    // Add copy functionality
     const copyBtn = messageDiv.querySelector('.copy-message-btn');
     copyBtn.addEventListener('click', () => {
         const messageText = messageDiv.querySelector('.message-text').textContent;
@@ -602,61 +590,47 @@ function generateResponse(userMessage) {
         return greetingResponses[Math.floor(Math.random() * greetingResponses.length)];
     }
     
-    if (userMessage.includes('istarc') || userMessage.includes('club') || userMessage.includes('science club')) {
-        const fact = istarcFacts[Math.floor(Math.random() * istarcFacts.length)];
+    if (userMessage.includes('oestron') || userMessage.includes('assistant') || userMessage.includes('ai')) {
+        const fact = oestronFacts[Math.floor(Math.random() * oestronFacts.length)];
         const scienceFact = scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)];
-        return `${fact}\n\nFun Science Fact: ${scienceFact}`;
+        return `${fact}\n\nScientific Context: ${scienceFact}`;
     }
     
-    if (userMessage.includes('science') || userMessage.includes('math') || userMessage.includes('physics') || 
-        userMessage.includes('chemistry') || userMessage.includes('biology')) {
-        const scienceResponse = scienceResponses[Math.floor(Math.random() * scienceResponses.length)];
+    if (userMessage.includes('science') || userMessage.includes('research') || userMessage.includes('study') || 
+        userMessage.includes('experiment') || userMessage.includes('data')) {
+        const academicResponse = academicResponses[Math.floor(Math.random() * academicResponses.length)];
         const scienceFact = scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)];
-        const istarcFact = istarcFacts[Math.floor(Math.random() * istarcFacts.length)];
-        return `${scienceResponse}\n\n${scienceFact}\n\nISTARC Perspective: ${istarcFact}`;
+        const oestronFact = oestronFacts[Math.floor(Math.random() * oestronFacts.length)];
+        return `${academicResponse}\n\n${scienceFact}\n\nNote: ${oestronFact}`;
     }
     
     const defaultResponses = [
-        `From ISTARC's perspective, I'd approach this scientifically by first understanding the core principles involved. This aligns with our focus on practical scientific applications.\n\nDid you know? ${scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)]}`,
-        `Based on ISTARC's focus on practical science, let's break this down using the scientific method. Our club emphasizes hands-on learning through experiments and research projects.\n\nScience Fact: ${scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)]}`,
-        `As an ISTARC assistant, I encourage exploring this through experimentation and observation. We believe in 'Science in Creation, not Annihilation' - using science for constructive purposes.\n\nInteresting Fact: ${scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)]}`,
-        `ISTARC teaches us to approach problems systematically. Let's analyze this step by step using research methodologies we practice in our workshops.\n\nScientific Trivia: ${scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)]}`,
-        `Drawing from ISTARC's research methodologies, we could investigate this further through systematic inquiry. Our club has helped students develop innovative projects using similar approaches.\n\nFun Fact: ${scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)]}`
+        `As OESTRON, I would approach this inquiry through systematic analysis and evidence-based reasoning. The scientific method provides a reliable framework.\n\nRelevant Fact: ${scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)]}`,
+        `This inquiry falls within the scope of scientific investigation. A methodological approach involving hypothesis testing and data analysis would be appropriate.\n\nScientific Principle: ${scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)]}`,
+        `The question presents an opportunity for systematic inquiry. Research methodology suggests beginning with literature review.\n\nResearch Consideration: ${oestronFacts[Math.floor(Math.random() * oestronFacts.length)]}`,
+        `From a scientific perspective, this matter warrants careful consideration of variables, controls, and measurement techniques.\n\nStatistical Note: Proper experimental design requires consideration of sample size, randomization, and control groups.`,
+        `The inquiry touches on fundamental scientific principles. Cross-disciplinary approaches often yield valuable insights.\n\nInterdisciplinary Insight: ${scienceMathFacts[Math.floor(Math.random() * scienceMathFacts.length)]}`
     ];
     
     return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
 }
 
-function showError(errorMessage) {
-    errorText.textContent = errorMessage;
-    errorContainer.style.display = 'block';
-    
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-    
-    setTimeout(() => {
-        errorContainer.style.display = 'none';
-    }, 5000);
-}
-
-// ===== FIXED: TOP POPUP NOTIFICATION WITH LOWER OPACITY =====
+// ===== NOTIFICATION SYSTEM =====
 function showTemporaryNotification(message) {
     const notification = document.createElement('div');
     
-    // Check current theme to apply appropriate color
     let backgroundColor, textColor;
     if (currentTheme === 'light') {
-        // White gradient for light theme
-        backgroundColor = 'linear-gradient(180deg, #F8FAFF 0%, #EEF2F9 100%)';
-        textColor = '#1e293b'; // Dark text for white background
+        backgroundColor = 'rgba(191, 189, 189, 0.95)';
+        textColor = '#1f3145';
     } else {
-        // Blue for dark theme
-        backgroundColor = 'var(--accent-color)';
-        textColor = 'white';
+        backgroundColor = 'rgba(15, 23, 42, 0.95)';
+        textColor = '#f1f5f9';
     }
     
     notification.style.cssText = `
         position: fixed;
-        top: 140px; /* Position below OESTRON logo */
+        top: 140px;
         left: 50%;
         transform: translateX(-50%) translateY(-30px);
         background: ${backgroundColor};
@@ -664,7 +638,7 @@ function showTemporaryNotification(message) {
         padding: 12px 24px;
         border-radius: 12px;
         z-index: 10000;
-        font-family: 'Exo 2', sans-serif;
+        font-family: 'Inter', sans-serif;
         font-size: 0.95rem;
         font-weight: 500;
         box-shadow: 0 5px 20px rgba(0,0,0,0.15);
@@ -672,23 +646,16 @@ function showTemporaryNotification(message) {
         white-space: nowrap;
         text-align: center;
         backdrop-filter: blur(5px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        opacity: 0.9; /* Slightly higher opacity for better readability */
+        border: 1px solid var(--border-color);
+        opacity: 0.9;
     `;
-    
-    // Add border color based on theme
-    if (currentTheme === 'light') {
-        notification.style.border = '1px solid rgba(226, 232, 240, 0.8)';
-    } else {
-        notification.style.border = '1px solid rgba(96, 165, 250, 0.3)';
-    }
     
     notification.textContent = message;
     document.body.appendChild(notification);
     
     setTimeout(() => {
         notification.style.transform = 'translateX(-50%) translateY(0)';
-        notification.style.opacity = '0.9'; /* Slightly higher opacity */
+        notification.style.opacity = '0.9';
     }, 10);
     
     setTimeout(() => {
@@ -725,7 +692,6 @@ function simulateFileUpload(file) {
         isSending = false;
         sendButton.disabled = false;
         sendButton.classList.remove('sending');
-        
         showTemporaryNotification(`"${file.name}" attached successfully`);
     }, 1500);
 }
@@ -746,45 +712,26 @@ function getFileType(filename) {
 
 // ===== EVENT LISTENERS =====
 function initializeEventListeners() {
-    // Theme toggle - now only changes theme
-    themeToggle.addEventListener('click', () => {
-        if (currentTheme === 'dark') {
-            applyTheme('light', true); // true = show notification
-        } else {
-            applyTheme('dark', true); // true = show notification
-        }
-    });
-    
-    // History toggle button - NEW
-    historyToggleBtn.addEventListener('click', toggleChatHistory);
-    
-    // New chat button
-    newChatBtn.addEventListener('click', createNewChat);
-    
     // Close history sidebar button
     closeHistoryBtn.addEventListener('click', () => {
         chatHistorySidebar.classList.remove('active');
-        historyToggleBtn.classList.remove('active');
         if (!footerInitialAnimation) {
             mainFooter.classList.remove('initial-visible');
         }
-        showTemporaryNotification("Chat history closed");
     });
     
-    // Close sidebar when clicking outside on desktop
+    // Close sidebar when clicking outside (only on desktop)
     document.addEventListener('click', (e) => {
         if (window.innerWidth > 900 && 
             chatHistorySidebar.classList.contains('active') &&
             !chatHistorySidebar.contains(e.target) &&
-            !historyToggleBtn.contains(e.target) &&
-            !closeHistoryBtn.contains(e.target)) {
+            e.target !== historyToggleDropdown &&
+            !e.target.closest('#historyToggleDropdown')) {
             
             chatHistorySidebar.classList.remove('active');
-            historyToggleBtn.classList.remove('active');
             if (!footerInitialAnimation) {
                 mainFooter.classList.remove('initial-visible');
             }
-            showTemporaryNotification("Chat history closed");
         }
     });
     
@@ -823,12 +770,10 @@ function initializeEventListeners() {
         emojiPicker.classList.toggle('active');
     });
     
-    // Close emoji picker button
     emojiCloseBtn.addEventListener('click', () => {
         emojiPicker.classList.remove('active');
     });
     
-    // Close emoji picker when clicking outside
     document.addEventListener('click', (e) => {
         if (!emojiPicker.contains(e.target) && e.target !== emojiPickerBtn) {
             emojiPicker.classList.remove('active');
@@ -838,7 +783,7 @@ function initializeEventListeners() {
     // Initialize auto-resize
     autoResizeTextarea();
     
-    // Add copy functionality to existing messages
+    // Copy functionality for existing messages
     document.querySelectorAll('.copy-message-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const messageContent = this.closest('.message-content');
@@ -865,7 +810,7 @@ function initializeEventListeners() {
         }
         
         if (window.innerWidth <= 600) {
-            emojiPicker.style.right = '-50px';
+            emojiPicker.style.right = '0';
         } else {
             emojiPicker.style.right = '0';
         }
@@ -875,15 +820,26 @@ function initializeEventListeners() {
 // ===== INITIALIZATION =====
 function initializeApp() {
     initializeTheme();
+    initializeDropdown();
     initializeEmojiPicker();
     initializeDeleteFunctionality();
     initializeMobileMenu();
     initializeEventListeners();
     
     if (window.innerWidth <= 600) {
-        emojiPicker.style.right = '-50px';
+        emojiPicker.style.right = '0';
     }
 }
 
 // Start the app when the page loads
 document.addEventListener('DOMContentLoaded', initializeApp);
+
+// Diagnostic test - run after 2 seconds
+setTimeout(() => {
+    console.log("=== DIAGNOSTIC TEST ===");
+    console.log("1. Sidebar exists:", !!chatHistorySidebar);
+    console.log("2. Sidebar has 'active' class:", chatHistorySidebar.classList.contains('active'));
+    console.log("3. Sidebar computed transform:", window.getComputedStyle(chatHistorySidebar).transform);
+    console.log("4. Sidebar computed display:", window.getComputedStyle(chatHistorySidebar).display);
+    console.log("5. Sidebar computed visibility:", window.getComputedStyle(chatHistorySidebar).visibility);
+}, 2000);
