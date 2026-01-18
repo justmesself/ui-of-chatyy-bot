@@ -842,4 +842,81 @@ setTimeout(() => {
     console.log("3. Sidebar computed transform:", window.getComputedStyle(chatHistorySidebar).transform);
     console.log("4. Sidebar computed display:", window.getComputedStyle(chatHistorySidebar).display);
     console.log("5. Sidebar computed visibility:", window.getComputedStyle(chatHistorySidebar).visibility);
-}, 2000);
+}, 2000)
+// ===== AUTO-DETECT ISTARC WORDS =====
+function styleISTARCWords() {
+    // Get all text nodes in the document
+    const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+    );
+    
+    let node;
+    const replacements = [];
+    
+    // Find text containing ISTARC
+    while (node = walker.nextNode()) {
+        const text = node.textContent;
+        if (text.match(/\bISTARC\b/i) && node.parentNode.nodeName !== 'SCRIPT' && node.parentNode.nodeName !== 'STYLE') {
+            replacements.push({ node, text });
+        }
+    }
+    
+    // Replace found text with styled spans
+    replacements.forEach(({ node, text }) => {
+        const span = document.createElement('span');
+        span.className = 'istarc-word';
+        
+        // Preserve case sensitivity
+        const newHTML = text.replace(/\b(ISTARC|istarc|Istarc)\b/g, '<span class="istarc-word">$1</span>');
+        
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = newHTML;
+        
+        // Replace the text node with new HTML
+        const fragment = document.createDocumentFragment();
+        while (tempDiv.firstChild) {
+            fragment.appendChild(tempDiv.firstChild);
+        }
+        
+        node.parentNode.replaceChild(fragment, node);
+    });
+}
+
+// Run on page load and when new messages arrive
+document.addEventListener('DOMContentLoaded', () => {
+    styleISTARCWords();
+    
+    // Also style ISTARC in AI responses
+    const originalAddMessage = window.addMessage;
+    if (originalAddMessage) {
+        window.addMessage = function(...args) {
+            const result = originalAddMessage.apply(this, args);
+            setTimeout(styleISTARCWords, 100); // Style after message is added
+            return result;
+        };
+    }
+});
+
+// Also run after chat history loads
+setTimeout(styleISTARCWords, 1000);// Add this after your existing JavaScript, before the initializeApp function
+function checkFontLoaded() {
+    // Wait for fonts to load
+    document.fonts.ready.then(() => {
+        console.log('Fonts loaded:', document.fonts.check('12px Bbigerover'));
+        
+        // Check if custom font is available
+        if (document.fonts.check('12px Bbigerover')) {
+            console.log('Bbigerover font is loaded successfully!');
+            showTemporaryNotification("Custom font loaded successfully");
+        } else {
+            console.warn('Bbigerover font failed to load. Using fallback fonts.');
+            showTemporaryNotification("Using fallback font for ISTARC");
+        }
+    });
+}
+
+// Call this function after initialization
+  setTimeout(checkFontLoaded, 2000);;
