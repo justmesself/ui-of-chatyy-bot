@@ -137,10 +137,10 @@ function startOpeningAnimation() {
     }, 50);
 }
 
-function startLogoAnimation() {
-    openingLogo.style.animation = 'logoToFooter 2s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards';
-    openingMottoText.style.transition = 'opacity 0.3s ease';
-    openingMottoText.style.opacity = '0';
+   function startLogoAnimation() {
+    const openingLogoImg = document.querySelector('.opening-logo-img');
+    openingLogoImg.style.transform = 'translateY(100vh) scale(0.1)';
+    openingLogoImg.style.opacity = '0';
 }
 
 // ===== TYPING EFFECT FOR FOOTER =====
