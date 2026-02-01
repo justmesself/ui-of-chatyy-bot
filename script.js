@@ -1,4 +1,3 @@
-
 // ===== GLOBAL VARIABLES =====
 let currentTheme = 'dark';
 let chatHistory = [];
@@ -28,7 +27,8 @@ const scienceEmojis = ["🔬", "⚗️", "🧪", "🧬", "🔭", "💻", "📡",
 // ===== DOM ELEMENT REFERENCES =====
 const dropdownToggle = document.getElementById('dropdownToggle');
 const dropdownMenu = document.getElementById('dropdownMenu');
-const themeToggleDropdown = document.getElementById('themeToggleDropdown');
+const themeToggleCheckbox = document.getElementById('themeToggleCheckbox');
+const themeToggleContainer = document.getElementById('themeToggleContainer');
 const newChatDropdown = document.getElementById('newChatDropdown');
 const historyToggleDropdown = document.getElementById('historyToggleDropdown');
 const chatHistorySidebar = document.getElementById('chatHistorySidebar');
@@ -87,7 +87,7 @@ function startOpeningAnimation() {
     }, 50);
 }
 
-   function startLogoAnimation() {
+function startLogoAnimation() {
     const openingLogoImg = document.querySelector('.opening-logo-img');
     openingLogoImg.style.transform = 'translateY(100vh) scale(0.1)';
     openingLogoImg.style.opacity = '0';
@@ -140,7 +140,8 @@ function initializeTheme() {
     const savedTheme = localStorage.getItem('chatTheme');
     if (savedTheme) {
         currentTheme = savedTheme;
-        toggleState = savedTheme === 'dark' ? 0 : 1;
+        // Set the toggle checkbox based on saved theme
+        themeToggleCheckbox.checked = savedTheme === 'light';
     }
     
     applyTheme(currentTheme, false);
@@ -154,6 +155,9 @@ function applyTheme(theme, showNotification = true) {
         document.body.classList.remove('light-theme');
         openingOverlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
         
+        // Update toggle state
+        themeToggleCheckbox.checked = false;
+        
         if (!isInitialThemeLoad && showNotification) {
             showTemporaryNotification("Switched to dark theme");
         }
@@ -161,6 +165,9 @@ function applyTheme(theme, showNotification = true) {
         document.body.classList.remove('dark-theme');
         document.body.classList.add('light-theme');
         openingOverlay.style.backgroundColor = 'rgba(189, 191, 191, 0.95)';
+        
+        // Update toggle state
+        themeToggleCheckbox.checked = true;
         
         if (!isInitialThemeLoad && showNotification) {
             showTemporaryNotification("Switched to light theme");
@@ -188,12 +195,21 @@ function initializeDropdown() {
         }
     });
     
-    themeToggleDropdown.addEventListener('click', () => {
-        dropdownMenu.classList.remove('active');
-        if (currentTheme === 'dark') {
+    // Theme toggle switch event
+    themeToggleCheckbox.addEventListener('change', () => {
+        if (themeToggleCheckbox.checked) {
             applyTheme('light', true);
         } else {
             applyTheme('dark', true);
+        }
+    });
+    
+    // Also toggle theme when clicking on the container (for better UX)
+    themeToggleContainer.addEventListener('click', (e) => {
+        // Don't trigger if clicking directly on the switch
+        if (!e.target.closest('.theme-toggle-switch')) {
+            themeToggleCheckbox.checked = !themeToggleCheckbox.checked;
+            themeToggleCheckbox.dispatchEvent(new Event('change'));
         }
     });
     
@@ -202,7 +218,7 @@ function initializeDropdown() {
         createNewChat();
     });
     
-    // FIXED: Chat history toggle button
+    // Chat history toggle button
     historyToggleDropdown.addEventListener('click', () => {
         console.log("=== HISTORY TOGGLE CLICKED ===");
         dropdownMenu.classList.remove('active');
@@ -212,7 +228,7 @@ function initializeDropdown() {
     console.log("All dropdown event listeners attached");
 }
 
-// ===== CHAT HISTORY TOGGLE FUNCTIONALITY - FIXED =====
+// ===== CHAT HISTORY TOGGLE FUNCTIONALITY =====
 function toggleChatHistory() {
     console.log("=== toggleChatHistory FUNCTION CALLED ===");
     
@@ -547,6 +563,7 @@ function generateResponse(userMessage) {
     
     return "I understand. As an AI science assistant, I'm here to help with evidence-based scientific inquiry and research methodology.";
 }
+
 // ===== NOTIFICATION SYSTEM =====
 function showTemporaryNotification(message) {
     const notification = document.createElement('div');
@@ -749,25 +766,6 @@ function initializeEventListeners() {
     });
 }
 
-// ===== INITIALIZATION =====
-function initializeApp() {
-    initializeTheme();
-    initializeDropdown();
-    initializeEmojiPicker();
-    initializeDeleteFunctionality();
-    initializeMobileMenu();
-    initializeEventListeners();
-    
-    if (window.innerWidth <= 600) {
-        emojiPicker.style.right = '0';
-    }
-}
-
-// Start the app when the page loads
-document.addEventListener('DOMContentLoaded', initializeApp);
-
-// Diagnostic test - run after 2 seconds
-
 // ===== AUTO-DETECT ISTARC WORDS =====
 function styleISTARCWords() {
     // Get all text nodes in the document
@@ -810,8 +808,20 @@ function styleISTARCWords() {
     });
 }
 
-// Run on page load and when new messages arrive
-document.addEventListener('DOMContentLoaded', () => {
+// ===== INITIALIZATION =====
+function initializeApp() {
+    initializeTheme();
+    initializeDropdown();
+    initializeEmojiPicker();
+    initializeDeleteFunctionality();
+    initializeMobileMenu();
+    initializeEventListeners();
+    
+    if (window.innerWidth <= 600) {
+        emojiPicker.style.right = '0';
+    }
+    
+    // Style ISTARC words
     styleISTARCWords();
     
     // Also style ISTARC in AI responses
@@ -819,9 +829,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (originalAddMessage) {
         window.addMessage = function(...args) {
             const result = originalAddMessage.apply(this, args);
-            setTimeout(styleISTARCWords, 100); // Style after message is added
+            setTimeout(styleISTARCWords, 100);
             return result;
         };
     }
-});
 
+}
+
+// Start the app when the page loads
+document.addEventListener('DOMContentLoaded', initializeApp);

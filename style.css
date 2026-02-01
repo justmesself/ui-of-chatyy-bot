@@ -102,21 +102,14 @@
     
     /* Logo opacity */
     --logo-opacity: 0.35;
-
-/* Font families - Updated */
-    --font-heading: 'Poppins', sans-serif;
-    --font-body: 'Inter', sans-serif;
-    --font-ui: 'Inter', sans-serif;
-    --font-logo: 'Roboto', sans-serif;
 }
-
 
 /* ===== DARK THEME - Keep as is ===== */
 .dark-theme {
     --primary-bg: #0f172a;
     --secondary-bg: #1e293b;
     --info-panel-bg: #1a2437;
-    --accent-color: #2dd4bf; /* Lighter teal for dark theme */
+    --accent-color: #2dd4bf;
     --accent-light: #5eead4;
     --accent-dark: #0d9488;
     --secondary-color: #94a3b8;
@@ -156,13 +149,11 @@ h1, h2, h3, h4, .logo-background {
 
 .logo-background {
     font-family: var(--font-logo);
-    font-weight: 400 !important; /* Lighter weight as requested */
+    font-weight: 400 !important;
 }
-/* Custom font for specific words */
 .custom-font {
      font-family: 'Bbigerover', var(--font-heading), sans-serif;
     letter-spacing: 0.5px;
-    /* Optional: add color if you want */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -252,8 +243,7 @@ h1, h2, h3, h4, .logo-background {
     object-fit: cover;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     border: 4px solid var(--accent-color);
-       /* Remove 'infinite' from animation */
-    animation: logoPulse 2s ease-in-out 1; /* Play only once */
+    animation: logoPulse 2s ease-in-out 1;
 }
 
 @keyframes logoPulse {
@@ -269,11 +259,6 @@ h1, h2, h3, h4, .logo-background {
         transform: scale(1);
         opacity: 1;
     }
-}
-
-    
-.opening-logo-img {
-    animation: logoPulse 2s ease-in-out 1; /* Remove 'infinite' */
 }
 
 .opening-motto {
@@ -616,14 +601,14 @@ h1, h2, h3, h4, .logo-background {
 
 /* ===== ENHANCED OESTRON HEADING ===== */
 .dark-theme .logo-background {
-    color: #5FB3E5; /* Your specified dark theme logo color */
+    color: #5FB3E5;
     text-shadow: 0 0 12px rgba(95, 179, 229, 0.35);
     letter-spacing: 0.12em;
     font-weight: 700;
 }
 
 .light-theme .logo-background {
-    color: #94AEBF; /* Your specified light theme logo color */
+    color: #94AEBF;
     text-shadow: 0 0 8px rgba(148, 174, 191, 0.25);
     letter-spacing: 0.12em;
     font-weight: 700;
@@ -737,8 +722,104 @@ h1, h2, h3, h4, .logo-background {
     color: var(--accent-color);
 }
 
+/* ===== THEME TOGGLE SWITCH IN DROPDOWN ===== */
+.theme-toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: default;
+}
+
+.theme-toggle-container:hover {
+    background-color: transparent !important;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+/* Theme toggle switch */
+.theme-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 26px;
+    margin-left: 10px;
+}
+
+.theme-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.theme-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-color);
+    border-radius: 34px;
+    transition: .4s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px;
+}
+
+.theme-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    transition: .4s;
+    z-index: 2;
+}
+
+.theme-toggle-switch input:checked + .theme-toggle-slider {
+    background-color: var(--accent-color);
+}
+
+.theme-toggle-switch input:checked + .theme-toggle-slider:before {
+    transform: translateX(26px);
+    background-color: var(--primary-bg);
+}
+
+/* Toggle icons */
+.toggle-icon {
+    font-size: 12px;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+    line-height: 1;
+}
+
+.sun-icon {
+    opacity: 0.8;
+}
+
+.moon-icon {
+    opacity: 0.4;
+}
+
+.theme-toggle-switch input:checked + .theme-toggle-slider .sun-icon {
+    opacity: 0.4;
+}
+
+.theme-toggle-switch input:checked + .theme-toggle-slider .moon-icon {
+    opacity: 0.8;
+}
+
 /* Watermark */
-/* Watermark - FIXED FOR BOTH THEMES */
 .watermark {
     position: absolute;
     top: 50%;
@@ -747,19 +828,17 @@ h1, h2, h3, h4, .logo-background {
     text-align: center;
     pointer-events: none;
     z-index: 1;
-   
-    opacity: 0.35; /* Fixed opacity - was 0.08 */
+    opacity: 0.35;
     display: block !important;
     visibility: visible !important;
 }
 .watermark {
-    z-index: 1!important; /* Increase from 0 to 10 */
+    z-index: 1!important;
 }
-
 
 .watermark-text {
     font-family: var(--font-heading);
-    font-size: 3.5rem; /* Smaller than 8rem */
+    font-size: 3.5rem;
     font-weight: 900;
     line-height: 0.7;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);opacity: 20%;
@@ -767,40 +846,41 @@ h1, h2, h3, h4, .logo-background {
 
 .watermark-subtext {
     font-family: var(--font-heading);
-    font-size: 1.1rem; /* Smaller than 1.5rem */
-    margin-top: -2px; /* Reduce gap */
+    font-size: 1.1rem;
+    margin-top: -2px;
     letter-spacing: 3px;
     opacity: 1200%;
 }
 
 /* Dark theme watermark */
 .dark-theme .watermark-text {
-    color: rgba(45, 212, 191, 0.25) !important; /* Teal with 25% opacity */
+    color: rgba(45, 212, 191, 0.25) !important;
 }
 
 .dark-theme .watermark-subtext {
     color: rgba(148, 163, 184, 0.4) !important;
 }
 
-/* Light theme watermark - DARKER for visibility */
+/* Light theme watermark */
 .light-theme .watermark {
-    z-index: 2 !important; /* Even higher for light theme */
-    opacity: 0.15 !important; /* Force full opacity */
+    z-index: 2 !important;
+    opacity: 0.15 !important;
     font-weight: 900;
 }
 .light-theme .watermark-text {
-    color: rgba(31, 78, 121, 0.7) !important; /* Darker color */
+    color: rgba(31, 78, 121, 0.7) !important;
     text-shadow: 0 2px 10px rgba(31, 78, 121, 0.3);
-    opacity: 1 !important; /* Remove any inherited opacity */
-    color: rgba(31, 78, 121, 0.3) !important; /* Dark blue with 30% opacity */
+    opacity: 1 !important;
+    color: rgba(31, 78, 121, 0.3) !important;
 }
 
 .light-theme .watermark-subtext {
-    color: rgba(71, 85, 105, 0.8) !important; /* Darker color */
+    color: rgba(71, 85, 105, 0.8) !important;
     text-shadow: 0 1px 6px rgba(71, 85, 105, 0.2);
-    opacity: 1 !important; /* Remove any inherited opacity */
-    color: rgba(71, 85, 105, 0.4) !important; /* Dark gray */
+    opacity: 1 !important;
+    color: rgba(71, 85, 105, 0.4) !important;
 }
+
 /* Dark theme chat container */
 .dark-theme .chat-messages-container {
     background: linear-gradient(135deg, var(--dark-bg-panel), var(--dark-bg-main));
@@ -864,6 +944,7 @@ h1, h2, h3, h4, .logo-background {
     width: 100%;
     animation: messageAppear 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
+
 /* ===== ISTARC CUSTOM FONT ===== */
 .istarc-word {
     font-family: 'Bbigerover', 'Poppins', sans-serif;
@@ -882,6 +963,7 @@ h1, h2, h3, h4, .logo-background {
 .light-theme .istarc-word {
     color: var(--light-accent, #2CA6A4);
 }
+
 /* Footer ISTARC */
 .branding-line2 {
     font-weight: 10;
@@ -918,7 +1000,6 @@ h1, h2, h3, h4, .logo-background {
 }
 
 /* Enhanced chat bubbles with outline */
-/* Dark theme messages */
 .dark-theme .message.assistant .message-content {
     background-color: var(--message-ai-bg, rgba(17, 26, 46, 0.7));
     border: 1px solid rgba(79, 163, 209, 0.15);
@@ -929,7 +1010,6 @@ h1, h2, h3, h4, .logo-background {
     border: 1px solid rgba(46, 196, 182, 0.25);
 }
 
-/* Light theme messages */
 .light-theme .message.assistant .message-content {
     background-color: var(--message-ai-bg, #EEF3F8);
     border: 1px solid rgba(31, 78, 121, 0.1);
@@ -969,8 +1049,6 @@ h1, h2, h3, h4, .logo-background {
     color: var(--text-paragraph);
 }
 
-
-
 .message-time {
     font-size: 0.75rem;
     color: var(--text-muted);
@@ -982,7 +1060,6 @@ h1, h2, h3, h4, .logo-background {
 .light-theme .message-time {
     color: var(--text-muted);
 }
-
 
 .copy-message-btn {
     position: absolute;
@@ -1194,7 +1271,7 @@ h1, h2, h3, h4, .logo-background {
 
 .branding-line1 {
     font-family: var(--font-ui);
-    font-size: 0.5rem; /* Reduced from 0.75rem */
+    font-size: 0.5rem;
     color: var(--text-muted);
     font-weight: 800;
     margin-bottom: .5px;
@@ -1531,27 +1608,23 @@ h1, h2, h3, h4, .logo-background {
     padding: 24px;
     overflow-y: auto;
     backdrop-filter: blur(5px);
-    transform: translateX(100%); /* HIDDEN - off screen to the right */
+    transform: translateX(100%);
     transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
     box-shadow: -5px 0 15px var(--shadow-heavy);
-    
-    /* CRITICAL FIXES: */
     position: fixed !important;
     right: 0 !important;
-    top: 0 !important; /* Changed from 24px to 0 */
-    height: 100vh !important; /* Changed from calc(100vh - 48px) */
-    border-radius: 0 0 0 20px; /* Adjusted border radius */
+    top: 0 !important;
+    height: 100vh !important;
+    border-radius: 0 0 0 20px;
     margin: 0;
-    z-index: 9999 !important; /* High z-index */
-    
-    /* Ensure visibility */
+    z-index: 9999 !important;
     visibility: visible !important;
     opacity: 1 !important;
     display: block !important;
 }
 
 .chat-history-sidebar.active {
-    transform: translateX(0) !important; /* VISIBLE */
+    transform: translateX(0) !important;
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
 }
 .light-theme .chat-history-sidebar {
@@ -1974,6 +2047,23 @@ h1, h2, h3, h4, .logo-background {
         top: 0;
         right: 0;
     }
+    
+    /* Theme toggle responsive */
+    .theme-toggle-switch {
+        width: 48px;
+        height: 24px;
+    }
+    
+    .theme-toggle-slider:before {
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+    }
+    
+    .theme-toggle-switch input:checked + .theme-toggle-slider:before {
+        transform: translateX(24px);
+    }
 }
 
 @media (max-width: 900px) {
@@ -2094,6 +2184,27 @@ h1, h2, h3, h4, .logo-background {
     .delete-confirmation-content {
         margin-top: -40px;
     }
+    
+    /* Theme toggle mobile */
+    .theme-toggle-switch {
+        width: 44px;
+        height: 22px;
+    }
+    
+    .theme-toggle-slider:before {
+        height: 16px;
+        width: 16px;
+        left: 3px;
+        bottom: 3px;
+    }
+    
+    .theme-toggle-switch input:checked + .theme-toggle-slider:before {
+        transform: translateX(22px);
+    }
+    
+    .toggle-icon {
+        font-size: 10px;
+    }
 }
 
 @media (max-width: 600px) {
@@ -2194,6 +2305,31 @@ h1, h2, h3, h4, .logo-background {
         top: 12px;
         height: calc(100vh - 24px);
     }
+    
+    /* Theme toggle small screens */
+    .theme-toggle-switch {
+        width: 40px;
+        height: 20px;
+    }
+    
+    .theme-toggle-slider:before {
+        height: 14px;
+        width: 14px;
+        left: 3px;
+        bottom: 3px;
+    }
+    
+    .theme-toggle-switch input:checked + .theme-toggle-slider:before {
+        transform: translateX(20px);
+    }
+    
+    .toggle-icon {
+        font-size: 9px;
+    }
+    
+    .dropdown-menu {
+        width: 180px;
+    }
 }
 
 @media (max-width: 400px) {
@@ -2218,6 +2354,27 @@ h1, h2, h3, h4, .logo-background {
         top: 16px;
         height: calc(100vh - 32px);
     }
+    
+    /* Theme toggle extra small */
+    .theme-toggle-switch {
+        width: 36px;
+        height: 18px;
+    }
+    
+    .theme-toggle-slider:before {
+        height: 12px;
+        width: 12px;
+        left: 3px;
+        bottom: 3px;
+    }
+    
+    .theme-toggle-switch input:checked + .theme-toggle-slider:before {
+        transform: translateX(18px);
+    }
+    
+    .toggle-icon {
+        font-size: 8px;
+    }
 }
 
 /* Force hover effect on footer when not in special states */
@@ -2233,13 +2390,12 @@ h1, h2, h3, h4, .logo-background {
 .chat-history-sidebar.active ~ .main-footer {
     transform: translateY(0) !important;
     pointer-events: none;
-    z-index: 1; /* Lower than sidebar */
+    z-index: 1;
 }
 
 .chat-history-sidebar.active ~ .main-footer * {
     pointer-events: auto;
 }
-
 
 /* Ensure messages are above watermark */
 .message {
